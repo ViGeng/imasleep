@@ -2,14 +2,10 @@
   
 </body>
 
-<script> window.oldkeys = Object.keys(window)</script>
 <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js" defer></script>
-<script> 
-// window.newkeys = Object.keys(window).filter(x=>!oldkeys.includes(x));
-// console.log(newkeys);
-</script>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@1.7.4/dist/tf-core.min.js"></script>
+<!-- Be sure to use tfjs 1.7.4, in tfjs 2 they broke their own handpose model-->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@1.7.4/dist/tf-core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@1.7.4/dist/tf-converter.min.js"></script>
 <script src="handpose.js"></script>
-<script src="/script.js"></script> -->
+<script src="sketch.js"></script>

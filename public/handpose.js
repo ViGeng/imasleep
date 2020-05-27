@@ -1,3 +1,5 @@
+// This file is just a copy of https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose
+// In case tfjs break/abandon it whic
 /**
     * @license
     * Copyright 2020 Google LLC. All Rights Reserved.

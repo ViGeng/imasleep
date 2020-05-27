@@ -9,6 +9,8 @@ var handposeModel = null; // this will be loaded with the handpose model
 
 var videoDataLoaded = false;
 
+var statusText = "Loading model..."
+
 // Load the MediaPipe handpose model assets.
 handpose.load().then(function(_model){
   console.log("model initialized.")
@@ -18,7 +20,7 @@ handpose.load().then(function(_model){
 var capture;
 
 function setup() {
-  createCanvas(480, 480);
+  createCanvas(600,600);
   capture = createCapture(VIDEO);
   
   capture.elt.onloadeddata = function(){
@@ -29,7 +31,12 @@ function setup() {
 }
 
 function draw() {
-  image(capture, 0, 0, width, width * capture.height / capture.width);
+  background(0);
+  image(capture, 0, 0, capture.width, capture.height);
+  fill(255,255,255);
+  
+  
+  
   
   if (handposeModel && videoDataLoaded){
     handposeModel.estimateHands(capture.elt).then(function(hands){
@@ -38,8 +45,15 @@ function draw() {
       for (var i = 0; i < hands.length; i++){
         console.log(hands[i])
         var landmarks = hands[i].landmarks;
+        for (var j = 0; j < landmarks.length; j++){
+          rect(landmarks[j][0],landmarks[j][1],5,5);
+          text(j,landmarks[j][0],landmarks[j][1])
+        }
       }
       
     })
   }
+  
+  
+  text(statusText,10,20);
 }

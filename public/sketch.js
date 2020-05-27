@@ -7,6 +7,8 @@
 var handposeModel = null; // this will be loaded with the handpose model
                           // WARNING: do NOT call it 'model', because p5 already has something called 'model'
 
+var videoDataLoaded = false;
+
 // Load the MediaPipe handpose model assets.
 handpose.load().then(function(_model){
   console.log("model initialized.")
@@ -18,19 +20,26 @@ var capture;
 function setup() {
   createCanvas(480, 480);
   capture = createCapture(VIDEO);
+  
+  capture.elt.onloadeddata = function(){
+    console.log("video initialized");
+    videoDataLoaded = true;
+  }
   capture.hide();
 }
 
 function draw() {
   image(capture, 0, 0, width, width * capture.height / capture.width);
   
-  if (handposeModel){
-    console.log(handposeModel)
-
+  if (handposeModel && videoDataLoaded){
     handposeModel.estimateHands(capture.elt).then(function(hands){
       // Each hand object contains a `landmarks` property,
       // which is an array of 21 3-D landmarks.
-      hands.forEach(hand => console.log(hand.landmarks));
+      for (var i = 0; i < hands.length; i++){
+        console.log(hands[i])
+        var landmarks = hands[i].landmarks;
+      }
+      
     })
   }
 }

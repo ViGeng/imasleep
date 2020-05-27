@@ -1,4 +1,5 @@
 // copy of https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose
+// uses local model url in case tfjs decides to break/abandom something
 /**
     * @license
     * Copyright 2020 Google LLC. All Rights Reserved.
@@ -424,13 +425,16 @@
     }
     t.load = async function({maxContinuousChecks: t=1 / 0, detectionConfidence: o=.8, iouThreshold: s=.3, scoreThreshold: i=.5}={}) {
         const [r,a,h] = await Promise.all([async function() {
+          //https://tfhub.dev/mediapipe/tfjs-model/handskeleton/1/default/1/anchors.json?tfjs-format=file
             return n.util.fetch("models/anchors.json").then(t=>t.json())
         }(), async function() {
+          //https://tfhub.dev/mediapipe/tfjs-model/handdetector/1/default/1
             return e.loadGraphModel("models/handdetector/", {
                 fromTFHub: !0
             })
         }(), async function() {
-            return e.loadGraphModel("https://tfhub.dev/mediapipe/tfjs-model/handskeleton/1/default/1", {
+          //https://tfhub.dev/mediapipe/tfjs-model/handskeleton/1/default/1
+            return e.loadGraphModel("models/handskeleton/", {
                 fromTFHub: !0
             })
         }()])

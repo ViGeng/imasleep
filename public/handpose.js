@@ -426,7 +426,7 @@
         const [r,a,h] = await Promise.all([async function() {
             return n.util.fetch("models/anchors.json").then(t=>t.json())
         }(), async function() {
-            return e.loadGraphModel("https://tfhub.dev/mediapipe/tfjs-model/handdetector/1/default/1", {
+            return e.loadGraphModel("models/handdetector/", {
                 fromTFHub: !0
             })
         }(), async function() {

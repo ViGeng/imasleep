@@ -4,23 +4,26 @@
 /* global describe handpose tf */
 // now any other lint errors will be your own problem
 
+var VIDEO_SCALE = 0.5; // downscale the webcam capture before drawing, so it doesn't take up too much screen sapce
+
 var handposeModel = null; // this will be loaded with the handpose model
                           // WARNING: do NOT call it 'model', because p5 already has something called 'model'
 
 var videoDataLoaded = false;
 
-var statusText = "Loading model..."
+var statusText = "Loading handpose model...";
 
 // Load the MediaPipe handpose model assets.
 handpose.load().then(function(_model){
   console.log("model initialized.")
+  statusText = "Model loaded."
   handposeModel = _model;
 })
 
 var capture;
 
 function setup() {
-  createCanvas(600,600);
+  createCanvas(window.innerWidth,window.innerHeight);
   capture = createCapture(VIDEO);
   
   capture.elt.onloadeddata = function(){
@@ -32,22 +35,34 @@ function setup() {
 
 function draw() {
   background(0);
-  image(capture, 0, 0, capture.width, capture.height);
-  fill(255,255,255);
+  image(capture, 0, 0, capture.width*VIDEO_SCALE, capture.height*VIDEO_SCALE);
+  fill(0,255,0);
   
   
-  
-  
-  if (handposeModel && videoDataLoaded){
+  if (handposeModel && videoDataLoaded){ // model and video both loaded, 
+    
     handposeModel.estimateHands(capture.elt).then(function(hands){
       // Each hand object contains a `landmarks` property,
       // which is an array of 21 3-D landmarks.
+      
+      if (!hands.length){
+        // haven't found any hands
+        statusText = "Show some hands!"
+      }else{
+        // display the confidence, to 3 decimal places
+        statusText = "Confidence: "+ (Math.round(hands[0].handInViewConfidence*1000)/1000);
+      }
+      
+      // draw each hand (currently handpose supports only 1)
       for (var i = 0; i < hands.length; i++){
         console.log(hands[i])
         var landmarks = hands[i].landmarks;
         for (var j = 0; j < landmarks.length; j++){
-          rect(landmarks[j][0],landmarks[j][1],5,5);
-          text(j,landmarks[j][0],landmarks[j][1])
+          var [x,y,z] = landmarks[j][0]; // coordinate in 3D space
+          
+          // draw the keypoint and number
+          rect(x*VIDEO_SCALE-2,y*VIDEO_SCALE-2,4,4);
+          text(j,y*VIDEO_SCALE,x*VIDEO_SCALE)
         }
       }
       

@@ -424,7 +424,7 @@
     }
     t.load = async function({maxContinuousChecks: t=1 / 0, detectionConfidence: o=.8, iouThreshold: s=.3, scoreThreshold: i=.5}={}) {
         const [r,a,h] = await Promise.all([async function() {
-            return n.util.fetch("model/anchors.json").then(t=>t.json())
+            return n.util.fetch("models/anchors.json").then(t=>t.json())
         }(), async function() {
             return e.loadGraphModel("https://tfhub.dev/mediapipe/tfjs-model/handdetector/1/default/1", {
                 fromTFHub: !0

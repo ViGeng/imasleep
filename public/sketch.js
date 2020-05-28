@@ -143,7 +143,8 @@ function draw() {
     }else{ // thin line for everyone else
       strokeWeight(1);
     }
-    stroke(...uuid2color(userId)); // unique color computed from user id
+
+    stroke(...uuid2color(userId).map(x=>x*0.5)); // unique color computed from user id
     drawHands(serverData[userId].hands,true);
     
     // draw a ball on index finger, size of which is the z-coordinate of the finger
@@ -158,6 +159,6 @@ function draw() {
   
   push();
   fill(255,0,0);
-  text(statusText,10,20);
+  text(statusText,2,60);
   pop();
 }

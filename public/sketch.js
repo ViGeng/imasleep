@@ -22,7 +22,7 @@ var statusText = "Loading handpose model...";
 var myHands = []; // hands detected in this browser
                   // currently handpose only supports single hand, so this will be either empty or singleton
 
-var myDrawing = [];
+var myDrawing = []; // drawing made by tracking index finger
 
 var capture; // webcam capture, managed by p5.js
 
@@ -57,6 +57,7 @@ function setup() {
   capture.hide();
 }
 
+// draw a hand object returned by handpose
 function drawHands(hands,noKeypoints){
   
   // Each hand object contains a `landmarks` property,
@@ -89,9 +90,11 @@ function drawHands(hands,noKeypoints){
 
   }
 }
+
+// draw the drawing as a series of dots
 function drawDrawing(drawing){
   for (var i = 0; i < drawing.length; i++){
-    ellipse(...drawing[i],10,10);
+    circle(...drawing[i]);
   }
 }
 
@@ -121,8 +124,10 @@ function draw() {
         // display the confidence, to 3 decimal places
         statusText = "Confidence: "+ (Math.round(myHands[0].handInViewConfidence*1000)/1000);
         
+        var indexFingerTip = 8;
         for (var i = 0; i < myHands.length; i++){
-          myDrawing.push([myHands[i][3][0],myHands[i][3][1]]);
+          // add a dot to the drawing where the index finger tip is
+          myDrawing.push(myHands[i].landmarks[indexFingerTip]);
         }
       }
       socket.emit('client-update',{hands:myHands,drawing:myDrawing});
@@ -141,7 +146,7 @@ function draw() {
   pop();
   
   
-  // now draw all the other users' hands from the server
+  // now draw all the other users' hands (& drawings) from the server
   push()
   scale(2);
   for (var userId in serverData){
@@ -150,9 +155,14 @@ function draw() {
     }else{ // thin line for everyone else
       strokeWeight(1);
     }
-    var col = ...uuid2color(userId);
-    stroke(col); 
+    var col = uuid2color(userId);
+    stroke(...col); // unique color computed from user id
     drawHands(serverData[userId].hands,true);
+    
+    
+    // draw the drawings
+    noStroke();
+    fill(...col,128);
     drawDrawing(serverData[userId].drawing,true);
   }
   pop();

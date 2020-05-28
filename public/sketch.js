@@ -56,11 +56,10 @@ function draw() {
       // draw each hand (currently handpose supports only 1)
       
       for (var i = 0; i < hands.length; i++){
-        // console.log(hands[i])
 
         var landmarks = hands[i].landmarks;
         
-        var joints = [0,5,9,13,17] //landmark indices at which fingers join the palm.
+        var palms = [0,1,2,5,9,13,17] //landmark indices that represent the palm
         
         for (var j = 0; j < landmarks.length; j++){
           var [x,y,z] = landmarks[j]; // coordinate in 3D space
@@ -70,12 +69,15 @@ function draw() {
           rect(x*VIDEO_SCALE-2,y*VIDEO_SCALE-2,4,4);
           text(j,x*VIDEO_SCALE,y*VIDEO_SCALE);
           
-          var isJoint = 
-          if (!joints.includes(j)){
-            line(x*VIDEO_SCALE,y*VIDEO_SCALE, landmarks[j-1][0]*VIDEO_SCALE, landmarks[j-1][1]*VIDEO_SCALE);
-          }else{
-            
+          // draw the skeleton
+          var isPalm = palms.indexOf(j); // is it a palm landmark or finger landmark?
+          var next; // who to connect with?
+          if (isPalm == -1){ // connect with previous finger landmark if it's a finger landmark
+            next = landmarks[j-1];
+          }else{ // connect with next palm landmark if it's a palm landmark
+            next = landmarks[palms[(isPalm+1)%palms.length]];
           }
+          line(x*VIDEO_SCALE,y*VIDEO_SCALE, next[0]*VIDEO_SCALE, next[1]*VIDEO_SCALE);
         }
         
       }

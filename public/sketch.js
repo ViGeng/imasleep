@@ -148,11 +148,11 @@ function draw() {
     drawHands(serverData[userId].hands,true);
     
     // draw a ball on index finger, size of which is the z-coordinate of the finger
-    noFill();
-    for (var i = 0; i < serverData[userId].hands.length; i++){
-      var indexFinger = serverData[userId].hands[i].landmarks[8];
-      circle(...indexFinger);
-    }
+    // noFill();
+    // for (var i = 0; i < serverData[userId].hands.length; i++){
+    //   var indexFinger = serverData[userId].hands[i].landmarks[8];
+    //   circle(...indexFinger);
+    // }
     
   }
   pop();

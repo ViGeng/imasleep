@@ -37,7 +37,7 @@ function draw() {
   background(0);
   image(capture, 0, 0, capture.width*VIDEO_SCALE, capture.height*VIDEO_SCALE);
   fill(0,255,0);
-  
+  stroke(0,255,0);
   
   if (handposeModel && videoDataLoaded){ // model and video both loaded, 
     
@@ -54,17 +54,32 @@ function draw() {
       }
       
       // draw each hand (currently handpose supports only 1)
+      
       for (var i = 0; i < hands.length; i++){
-        console.log(hands[i])
+        // console.log(hands[i])
+
         var landmarks = hands[i].landmarks;
+        
+        var joints = [0,5,9,13,17] //landmark indices at which fingers join the palm.
+        
         for (var j = 0; j < landmarks.length; j++){
-          var [x,y,z] = landmarks[j][0]; // coordinate in 3D space
+          var [x,y,z] = landmarks[j]; // coordinate in 3D space
           
           // draw the keypoint and number
+          // can't use push/popMatrix here, we're in an async promise!
           rect(x*VIDEO_SCALE-2,y*VIDEO_SCALE-2,4,4);
-          text(j,y*VIDEO_SCALE,x*VIDEO_SCALE)
+          text(j,x*VIDEO_SCALE,y*VIDEO_SCALE);
+          
+          var isJoint = 
+          if (!joints.includes(j)){
+            line(x*VIDEO_SCALE,y*VIDEO_SCALE, landmarks[j-1][0]*VIDEO_SCALE, landmarks[j-1][1]*VIDEO_SCALE);
+          }else{
+            
+          }
         }
+        
       }
+      
       
     })
   }

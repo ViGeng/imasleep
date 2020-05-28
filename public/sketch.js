@@ -31,7 +31,7 @@ socket.emit('client-start')
 
 socket.on('server-update', function(data){
   serverData = data;
-  console.log(serverData);
+  // console.log(serverData);
 })
 
 function setup() {
@@ -77,6 +77,16 @@ function drawHands(hands,noKeypoints){
   }
 }
 
+// hash to a unique color for each user ID
+function uuid2color(uuid){
+  var col = 1;
+  for (var i = 0; i < uuid.length; i++){
+    var cc = uuid.charCodeAt(i);
+    col = (col*cc) % 0xFFFFFF;
+  }
+  return [(col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff]
+}
+
 function draw() {
     
   if (handposeModel && videoDataLoaded){ // model and video both loaded, 
@@ -113,6 +123,7 @@ function draw() {
     }else{
       strokeWeight(1);
     }
+    stroke(...uuid2color(userId));
     drawHands(serverData[userId],true);
   }
   pop();

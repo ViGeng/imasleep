@@ -31,6 +31,7 @@ socket.emit('client-start')
 
 socket.on('server-update', function(data){
   serverData = data;
+  console.log(serverData);
 })
 
 function setup() {
@@ -77,10 +78,7 @@ function drawHands(hands,noKeypoints){
 }
 
 function draw() {
-  
-  
-
-  
+    
   if (handposeModel && videoDataLoaded){ // model and video both loaded, 
     
     handposeModel.estimateHands(capture.elt).then(function(_hands){
@@ -92,6 +90,7 @@ function draw() {
         // display the confidence, to 3 decimal places
         statusText = "Confidence: "+ (Math.round(myHands[0].handInViewConfidence*1000)/1000);
       }
+      socket.emit('client-update',myHands);
     })
   }
   
@@ -104,6 +103,10 @@ function draw() {
   
   drawHands(myHands);
   pop();
+  
+  for (var userId in serverData){
+    drawHands(serverData[userId]);
+  }
   
   
   push();

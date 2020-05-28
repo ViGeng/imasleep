@@ -4,7 +4,6 @@
 /* global describe handpose tf */
 // now any other lint errors will be your own problem
 
-var VIDEO_SCALE = 0.5; // downscale the webcam capture before drawing, so it doesn't take up too much screen sapce
 
 var handposeModel = null; // this will be loaded with the handpose model
                           // WARNING: do NOT call it 'model', because p5 already has something called 'model'
@@ -12,6 +11,8 @@ var handposeModel = null; // this will be loaded with the handpose model
 var videoDataLoaded = false;
 
 var statusText = "Loading handpose model...";
+
+var hands = [];
 
 // Load the MediaPipe handpose model assets.
 handpose.load().then(function(_model){
@@ -33,18 +34,46 @@ function setup() {
   capture.hide();
 }
 
+function drawHands(hands){
+  // Each hand object contains a `landmarks` property,
+  // which is an array of 21 3-D landmarks.
+  for (var i = 0; i < hands.length; i++){
+
+    var landmarks = hands[i].landmarks;
+
+    var palms = [0,1,2,5,9,13,17] //landmark indices that represent the palm
+
+    for (var j = 0; j < landmarks.length; j++){
+      var [x,y,z] = landmarks[j]; // coordinate in 3D space
+
+      // draw the keypoint and number
+      // can't use push/popMatrix here, we're in an async promise!
+      rect(x-2,y-2,4,4);
+      text(j,x,y);
+
+      // draw the skeleton
+      var isPalm = palms.indexOf(j); // is it a palm landmark or finger landmark?
+      var next; // who to connect with?
+      if (isPalm == -1){ // connect with previous finger landmark if it's a finger landmark
+        next = landmarks[j-1];
+      }else{ // connect with next palm landmark if it's a palm landmark
+        next = landmarks[palms[(isPalm+1)%palms.length]];
+      }
+      line(x,y, ...next);
+    }
+
+  }
+}
+
 function draw() {
-  background(0);
-  image(capture, 0, 0, capture.width*VIDEO_SCALE, capture.height*VIDEO_SCALE);
-  fill(0,255,0);
-  stroke(0,255,0);
+  
+  
+
   
   if (handposeModel && videoDataLoaded){ // model and video both loaded, 
     
-    handposeModel.estimateHands(capture.elt).then(function(hands){
-      // Each hand object contains a `landmarks` property,
-      // which is an array of 21 3-D landmarks.
-      
+    handposeModel.estimateHands(capture.elt).then(function(_hands){
+      hands = _hands; // update the global hands object with the detected hands
       if (!hands.length){
         // haven't found any hands
         statusText = "Show some hands!"
@@ -52,40 +81,21 @@ function draw() {
         // display the confidence, to 3 decimal places
         statusText = "Confidence: "+ (Math.round(hands[0].handInViewConfidence*1000)/1000);
       }
-      
-      // draw each hand (currently handpose supports only 1)
-      
-      for (var i = 0; i < hands.length; i++){
-
-        var landmarks = hands[i].landmarks;
-        
-        var palms = [0,1,2,5,9,13,17] //landmark indices that represent the palm
-        
-        for (var j = 0; j < landmarks.length; j++){
-          var [x,y,z] = landmarks[j]; // coordinate in 3D space
-          
-          // draw the keypoint and number
-          // can't use push/popMatrix here, we're in an async promise!
-          rect(x*VIDEO_SCALE-2,y*VIDEO_SCALE-2,4,4);
-          text(j,x*VIDEO_SCALE,y*VIDEO_SCALE);
-          
-          // draw the skeleton
-          var isPalm = palms.indexOf(j); // is it a palm landmark or finger landmark?
-          var next; // who to connect with?
-          if (isPalm == -1){ // connect with previous finger landmark if it's a finger landmark
-            next = landmarks[j-1];
-          }else{ // connect with next palm landmark if it's a palm landmark
-            next = landmarks[palms[(isPalm+1)%palms.length]];
-          }
-          line(x*VIDEO_SCALE,y*VIDEO_SCALE, next[0]*VIDEO_SCALE, next[1]*VIDEO_SCALE);
-        }
-        
-      }
-      
-      
     })
   }
   
+  background(0);
+  push();
+  scale(0.5); // downscale the webcam capture before drawing, so it doesn't take up too much screen sapce
+  image(capture, 0, 0, capture.width, capture.height);
+  fill(0,255,0);
+  stroke(0,255,0);
   
+  drawHands(hands);
+  pop();
+  
+  push();
+  fill(0,255,0);
   text(statusText,10,20);
+  pop();
 }

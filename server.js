@@ -35,15 +35,15 @@ function newConnection(socket){
 	}
   
 	function onClientUpdate(data){
-    server[socket.id] = data;
+    serverData[socket.id] = data;
 	}
   
 	function onClientExit(){
-    delete server[socket.id];
+    delete serverData[socket.id];
     console.log(socket.id+' disconnected');
 	}
 }	
 
-
+console.log("...")
 io.sockets.on('connection', newConnection);
 

@@ -104,10 +104,18 @@ function draw() {
   drawHands(myHands);
   pop();
   
-  for (var userId in serverData){
-    drawHands(serverData[userId]);
-  }
   
+  push()
+  scale(2);
+  for (var userId in serverData){
+    if (userId == socket.id){
+      strokeWeight(5);
+    }else{
+      strokeWeight(1);
+    }
+    drawHands(serverData[userId],true);
+  }
+  pop();
   
   push();
   fill(255,0,0);

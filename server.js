@@ -24,7 +24,7 @@ function newConnection(socket){
 		
 		setInterval(function(){
 			socket.emit('server-update', serverData);
-		}, 200);
+		}, 10);
 		
 	}
   

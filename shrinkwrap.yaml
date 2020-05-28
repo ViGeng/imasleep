@@ -627,4 +627,4 @@ shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
   express: ^4.17.1
-  socket.io: ^2.1.0
+  socket.io: ^2.3.0

@@ -22,6 +22,8 @@ var statusText = "Loading handpose model...";
 var myHands = []; // hands detected in this browser
                   // currently handpose only supports single hand, so this will be either empty or singleton
 
+var myDrawing = [];
+
 var capture; // webcam capture, managed by p5.js
 
 var serverData = {} // stores other users's hands from the server
@@ -87,6 +89,11 @@ function drawHands(hands,noKeypoints){
 
   }
 }
+function drawDrawing(drawing){
+  for (var i = 0; i < drawing.length; i++){
+    ellipse(...drawing[i],10,10);
+  }
+}
 
 // hash to a unique color for each user ID
 function uuid2color(uuid){
@@ -113,8 +120,12 @@ function draw() {
       }else{
         // display the confidence, to 3 decimal places
         statusText = "Confidence: "+ (Math.round(myHands[0].handInViewConfidence*1000)/1000);
+        
+        for (var i = 0; i < myHands.length; i++){
+          myDrawing.push([myHands[i][3][0],myHands[i][3][1]]);
+        }
       }
-      socket.emit('client-update',myHands);
+      socket.emit('client-update',{hands:myHands,drawing:myDrawing});
     })
   }
   
@@ -139,8 +150,10 @@ function draw() {
     }else{ // thin line for everyone else
       strokeWeight(1);
     }
-    stroke(...uuid2color(userId)); // unique color computed from user id
-    drawHands(serverData[userId],true);
+    var col = ...uuid2color(userId);
+    stroke(col); 
+    drawHands(serverData[userId].hands,true);
+    drawDrawing(serverData[userId].drawing,true);
   }
   pop();
   

@@ -130,6 +130,8 @@ function draw() {
           myDrawing.push(myHands[i].landmarks[indexFingerTip]);
         }
       }
+      
+      // tell the server about our updates!
       socket.emit('client-update',{hands:myHands,drawing:myDrawing});
     })
   }

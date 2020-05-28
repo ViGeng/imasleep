@@ -4,20 +4,21 @@
 /* global describe handpose tf io*/
 // now any other lint errors will be your own problem
 
-var socket = io();
+var socket = io(); // the networking library
 
 var handposeModel = null; // this will be loaded with the handpose model
                           // WARNING: do NOT call it 'model', because p5 already has something called 'model'
 
-var videoDataLoaded = false;
+var videoDataLoaded = false; // is webcam capture ready?
 
 var statusText = "Loading handpose model...";
 
-var myHands = [];
+var myHands = []; // hands detected in this browser
+                  // currently handpose only supports single hand, so this will be either empty or singleton
 
-var capture;
+var capture; // webcam capture, managed by p5.js
 
-var serverData = {}
+var serverData = {} // stores other users's hands from the server
 
 // Load the MediaPipe handpose model assets.
 handpose.load().then(function(_model){
@@ -26,26 +27,30 @@ handpose.load().then(function(_model){
   handposeModel = _model;
 })
 
-
+// tell the server we're ready!
 socket.emit('client-start')
 
+// update our data everytime the server sends us an update
 socket.on('server-update', function(data){
   serverData = data;
-  // console.log(serverData);
 })
 
 function setup() {
   createCanvas(window.innerWidth,window.innerHeight);
   capture = createCapture(VIDEO);
   
+  // this is to make sure the capture is loaded before asking handpose to take a look
+  // otherwise handpose will be very unhappy
   capture.elt.onloadeddata = function(){
     console.log("video initialized");
     videoDataLoaded = true;
   }
+  
   capture.hide();
 }
 
 function drawHands(hands,noKeypoints){
+  
   // Each hand object contains a `landmarks` property,
   // which is an array of 21 3-D landmarks.
   for (var i = 0; i < hands.length; i++){
@@ -92,6 +97,9 @@ function draw() {
   if (handposeModel && videoDataLoaded){ // model and video both loaded, 
     
     handposeModel.estimateHands(capture.elt).then(function(_hands){
+      // we're handling an async promise
+      // best to avoid drawing something here! it might produce weird results due to racing
+      
       myHands = _hands; // update the global myHands object with the detected hands
       if (!myHands.length){
         // haven't found any hands
@@ -105,25 +113,27 @@ function draw() {
   }
   
   background(200);
+  
+  // first draw the debug video and annotations
   push();
   scale(0.5); // downscale the webcam capture before drawing, so it doesn't take up too much screen sapce
   image(capture, 0, 0, capture.width, capture.height);
   fill(255,0,0);
   stroke(255,0,0);
-  
-  drawHands(myHands);
+  drawHands(myHands); // draw my hand skeleton
   pop();
   
   
+  // now draw all the other users' hands from the server
   push()
   scale(2);
   for (var userId in serverData){
-    if (userId == socket.id){
+    if (userId == socket.id){ // thick line for me
       strokeWeight(5);
-    }else{
+    }else{ // thin line for everyone else
       strokeWeight(1);
     }
-    stroke(...uuid2color(userId));
+    stroke(...uuid2color(userId)); // unique color computed from user id
     drawHands(serverData[userId],true);
   }
   pop();

@@ -7,29 +7,38 @@
 /* global describe io*/
 // now any other lint errors will be your own problem
 
+let isSafari = !!window.navigator.userAgent.match(/Safari/i);
 let hasSensorPermission = !(DeviceOrientationEvent.requestPermission || DeviceMotionEvent.requestPermission);
+var flipXY = false;
+
+// iOS screws up X/Y axis if Safari starts up in portrait mode
+if (isSafari && window.innerHeight>window.innerWidth){
+  flipXY = true;
+}
 
 
 function begPermission(){
-//   if (DeviceOrientationEvent.requestPermission){
-//     DeviceOrientationEvent.requestPermission()
-//     .then(response => {
-//       if (response == 'granted') {
+  if (DeviceOrientationEvent.requestPermission){
+    DeviceOrientationEvent.requestPermission()
+    .then(response => {
+      if (response == 'granted') {
         
         if (DeviceMotionEvent.requestPermission){
           DeviceMotionEvent.requestPermission()
           .then(response => {
             if (response == 'granted') {
               hasSensorPermission = true;
-              
+                window.addEventListener('devicemotion', (e) => {
+                  alert(JSON.stringify(e));
+                })
             }
           })
           .catch(alert)
         }
-  //     }
-  //   })
-  //   .catch(alert)
-  // }
+      }
+    })
+    .catch(alert)
+  }
 }
 
 var socket = io(); // the networking library
@@ -68,6 +77,7 @@ socket.on('connection-reject', function(data){
 
 function setup() {
   createCanvas(window.innerWidth,window.innerHeight);  
+
 }
 
 function drawData(color,hW,hH,data){
@@ -115,7 +125,7 @@ function drawData(color,hW,hH,data){
   
   push();
   translate(hW*3/4,hH/2);
-  var cam = [-radians(rotationY),-radians(rotationX),-radians(rotationZ), 0,0,20, 100];
+  var cam = [-radians(data.rotY),-radians(data.rotX),-radians(data.rotZ), 0,0,20, 100];
   stroke(255);
   let [va,vb,vc,vd, ve,vf,vg,vh] = [
     vertex3d(-8,-8,-8, ...cam),
@@ -173,8 +183,8 @@ function draw() {
   }
   
   
-  clientData.rotX = rotationX;
-  clientData.rotY = rotationY;
+  clientData.rotX = flipXY?rotationY:rotationX;
+  clientData.rotY = flipXY?-rotationX:rotationY;
   clientData.rotZ = rotationZ;
   clientData.accX = accelerationX;
   clientData.accY = accelerationY;
@@ -201,10 +211,18 @@ function draw() {
   
 }
 
+function touchStarted(){
+  return false;
+}
+function touchMoved(){
+  return false;
+}
+
 function touchEnded() {
   if (!hasSensorPermission){
     begPermission();
   }
+  return false;
 }
 
 

@@ -104,11 +104,15 @@ function drawSensorsData(color,label,hW,hH,data){
   fill(255);
   textAlign(LEFT);
   text(label,5,32);
-  noFill();
+  
   
   if (!data){
+    textSize(16);
+    text("Nobody there.",8,64);
     return;
   }
+  
+  noFill();
   
   strokeWeight(2);
   

@@ -16,6 +16,7 @@ if (isSafari && window.innerHeight>window.innerWidth){
   flipXY = true;
 }
 
+alert(flipXY);
 
 function begPermission(){
   if (DeviceOrientationEvent.requestPermission){
@@ -28,9 +29,13 @@ function begPermission(){
           .then(response => {
             if (response == 'granted') {
               hasSensorPermission = true;
-                window.addEventListener('devicemotion', (e) => {
-                  alert(JSON.stringify(e));
-                })
+              window.ondevicemotion = function(event) {
+                if (!event.acceleration){
+                  clientData.accX = event.accelerationIncludingGravity.x;
+                  clientData.accY = event.accelerationIncludingGravity.y;
+                  clientData.accZ = event.accelerationIncludingGravity.z;
+                }
+              }
             }
           })
           .catch(alert)
@@ -186,9 +191,11 @@ function draw() {
   clientData.rotX = flipXY?rotationY:rotationX;
   clientData.rotY = flipXY?-rotationX:rotationY;
   clientData.rotZ = rotationZ;
-  clientData.accX = accelerationX;
-  clientData.accY = accelerationY;
-  clientData.accZ = accelerationZ;
+  clientData.accX = accelerationX || clientData.accX;
+  clientData.accY = accelerationY || clientData.accY;
+  clientData.accZ = accelerationZ || clientData.accZ;
+  
+  
 
   let hW = width;
   let hH = height/2;

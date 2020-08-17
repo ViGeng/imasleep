@@ -7,7 +7,7 @@
 /* global describe io*/
 // now any other lint errors will be your own problem
 
-let isSafari = !!window.navigator.userAgent.match(/Safari/i);
+let isSafari = !!window.navigator.userAgent.match(/Safari/i) && !window.navigator.userAgent.match(/Android/i);
 let hasSensorPermission = !(DeviceOrientationEvent.requestPermission || DeviceMotionEvent.requestPermission);
 var flipXY = false;
 
@@ -16,7 +16,6 @@ if (isSafari && window.innerHeight>window.innerWidth){
   flipXY = true;
 }
 
-alert(flipXY);
 
 function begPermission(){
   if (DeviceOrientationEvent.requestPermission){
@@ -33,7 +32,7 @@ function begPermission(){
                 if (!event.acceleration){
                   clientData.accX = event.accelerationIncludingGravity.x;
                   clientData.accY = event.accelerationIncludingGravity.y;
-                  clientData.accZ = event.accelerationIncludingGravity.z;
+                  clientData.accZ = event.accelerationIncludingGravity.z+9.8;
                 }
               }
             }
@@ -80,15 +79,25 @@ socket.on('connection-reject', function(data){
   status = "reject";
 })
 
+socket.on('server-update',function(data){
+  serverData = data;
+})
+
 function setup() {
   createCanvas(window.innerWidth,window.innerHeight);  
 
 }
 
-function drawData(color,hW,hH,data){
+function drawData(color,label,hW,hH,data){
   noStroke();
   fill(...color)
   rect(0,0,hW,hH);
+  
+  textSize(32);
+  fill(255);
+  textAlign(LEFT);
+  text(label,5,32);
+  noFill();
   
   if (!data){
     return;
@@ -195,7 +204,7 @@ function draw() {
   clientData.accY = accelerationY || clientData.accY;
   clientData.accZ = accelerationZ || clientData.accZ;
   
-  
+  socket.emit('client-update',clientData);
 
   let hW = width;
   let hH = height/2;
@@ -203,8 +212,8 @@ function draw() {
     hW = width/2;
     hH = height;
   }
-
-  drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
+  
+  drawData(colors[0],"THEY",hW,hH,serverData[Object.keys(serverData)[0]]);
 
   if (height>width){
     translate(0,hH);
@@ -212,7 +221,7 @@ function draw() {
     translate(hW,0);
   }
 
-  drawData(colors[1],hW,hH,clientData);
+  drawData(colors[1],"ME",hW,hH,clientData);
 
   
   

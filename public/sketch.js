@@ -15,8 +15,8 @@ var serverData = {}; // stores other users's hands from the server
 var status = "unknown";
 
 var colors = [
-  [120,160,255],
-  [255,120,160],
+  [120,200,255],
+  [255,120,180],
 ]
 
 function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
@@ -45,33 +45,53 @@ function setup() {
   createCanvas(window.innerWidth,window.innerHeight);  
 }
 
-
-function draw() {
-  let hW = width;
-  let hH = height/2;
-  
+function drawData(color,hW,hH,data){
   noStroke();
-  fill(...colors[0])
-  if (height>width){
-    rect(0,0,width,height/2);
-  }else{
-    
-  }
+  fill(...color)
   rect(0,0,hW,hH);
   
-  fill(...colors[1])
-  if (height>width){
-    translate(0,hH);
-  }else{
-    translate(hW,0);
+  if (!data){
+    return;
   }
-  rect(0,0,hW,hH);
-
+  
+  strokeWeight(2);
+  
   push();
-  translate(width/2,height/4);
+  stroke(255);
+  translate(hW/4,hH/2);
+  
+  let [ax,ay,az] = [(data.accX),
+                   -(data.accY),
+                    (data.accZ)];
+  let ang = Math.atan2(ay,ax);
+  let len = Math.hypot(ax,ay)*10;
+  push();
+  
+  rotate(ang);
+  line(0,0,len,0);
+  noStroke();
+  fill(255);
+  if (len>4){
+    triangle(len-4,-4,len+4,0,len-4,4);
+  }
+  pop();
+  fill(...color);
+  stroke(255);
+  circle(0,0,az*2+4);
+  fill(255);
+  if (az > 0){
+    circle(0,0,az/2);
+  }else{
+    line(-az/2,-az/2,az/2,az/2);
+    line(az/2,-az/2,-az/2,az/2);
+  }  
+  pop();
+  
+  
+  push();
+  translate(hW*3/4,hH/2);
   var cam = [-radians(rotationY),-radians(rotationX),-radians(rotationZ), 0,0,20, 100];
   stroke(255);
-  strokeWeight(2);
   let [va,vb,vc,vd, ve,vf,vg,vh] = [
     vertex3d(-8,-8,-8, ...cam),
     vertex3d( 8,-8,-8, ...cam),
@@ -98,6 +118,34 @@ function draw() {
   line(...vc,...vg);
   line(...vd,...vh);
   pop();
+  
+}
+
+
+function draw() {
+  clientData.rotX = rotationX;
+  clientData.rotY = rotationY;
+  clientData.rotZ = rotationZ;
+  clientData.accX = accelerationX;
+  clientData.accY = accelerationY;
+  clientData.accZ = accelerationZ;
+  
+  let hW = width;
+  let hH = height/2;
+  if (width > height){
+    hW = width/2;
+    hH = height;
+  }
+  
+  drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
+  
+  if (height>width){
+    translate(0,hH);
+  }else{
+    translate(hW,0);
+  }
+
+  drawData(colors[1],hW,hH,clientData);
   
   
 }

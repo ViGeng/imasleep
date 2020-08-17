@@ -12,39 +12,34 @@ var io = require('socket.io')(server);
 
 var serverData = {}; // everyone's data
 
-function newConnection(socket){
-  console.log(io.engine.clientsCount);
-  
-	console.log('new connection: ' + socket.id);
-  
-  socket.on('client-start', onClientStart);
-	socket.on('client-update', onClientUpdate);
-	socket.on('disconnect', onClientExit);
+var numPlayers = 0;
 
-  // client is ready
-	function onClientStart(){
-    // uncomment to send an update every 10 milliseconds
-		// currently we will be sending update every time
-    // the client updates us, to avoid wasting resources
-		// setInterval(function(){
-		// 	socket.emit('server-update', serverData);
-		// }, 10);
-	}
+function newConnection(socket){
+  console.log('new connection: ' + socket.id);
   
-  // client is sending us an update
-	function onClientUpdate(data){
+  if (numPlayers >= 2){
+    socket.emit("connection-reject");
+    return;
+  }
+  numPlayers++;
+  
+  socket.emit("connection-approve");
+  
+  socket.on('client-update',function(data){
     serverData[socket.id] = data;
-    
-    // we update them too
-    socket.emit('server-update', serverData);
-	}
+  })
+
+  let timer = setInterval(function(){
+		socket.emit('server-update', serverData);
+	}, 10);
   
-  // bye bye
-	function onClientExit(){
+  socket.on('disconnect', function(){
+    clearInterval(timer);
     delete serverData[socket.id];
     console.log(socket.id+' disconnected');
-	}
-}	
+    numPlayers--;
+  });
+}
 
 console.log("listening...")
 io.sockets.on('connection', newConnection);

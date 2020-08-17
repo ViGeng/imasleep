@@ -95,7 +95,7 @@ function setup() {
 
 }
 
-function drawData(color,label,hW,hH,data){
+function drawSensorsData(color,label,hW,hH,data){
   noStroke();
   fill(...color)
   rect(0,0,hW,hH);
@@ -174,6 +174,18 @@ function drawData(color,label,hW,hH,data){
   line(...vc,...vg);
   line(...vd,...vh);
   pop();
+    
+}
+
+function drawTouchesData(color,data){
+  if (!data || !data.touches){
+    return;
+  }
+  for (var i = 0; i < data.touches.length; i++){
+    fill(...color);
+    stroke(255);
+    circle(data.touches[i].x,data.touches[i].y,90);
+  }
   
 }
 
@@ -210,9 +222,12 @@ function draw() {
   clientData.accX = accelerationX || clientData.accX;
   clientData.accY = accelerationY || clientData.accY;
   clientData.accZ = accelerationZ || clientData.accZ;
+  clientData.touches = touches;
   
   socket.emit('client-update',clientData);
 
+  let otherData = serverData[Object.keys(serverData)[0]];
+  
   let hW = width;
   let hH = height/2;
   if (width > height){
@@ -220,7 +235,7 @@ function draw() {
     hH = height;
   }
   
-  drawData(colors[0],"THEM",hW,hH,serverData[Object.keys(serverData)[0]]);
+  drawSensorsData(colors[0],"THEM",hW,hH,otherData);
 
   if (height>width){
     translate(0,hH);
@@ -228,8 +243,12 @@ function draw() {
     translate(hW,0);
   }
 
-  drawData(colors[1],"ME",hW,hH,clientData);
+  drawSensorsData(colors[1],"ME",hW,hH,clientData);
 
+  
+  resetMatrix();
+  drawTouchesData(colors[0],otherData);
+  drawTouchesData(colors[1],clientData);
   
 }
 

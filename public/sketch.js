@@ -7,6 +7,29 @@
 /* global describe io*/
 // now any other lint errors will be your own problem
 
+let hasSensorPermission = true;
+
+function begPermission(){
+  if (DeviceOrientationEvent.requestPermission){
+    hasSensorPermission = false;
+    DeviceOrientationEvent.requestPermission()
+    .then(response => {
+      if (response == 'granted') {
+        if (DeviceMotionEvent.requestPermission){
+          DeviceMotionEvent.requestPermission()
+          .then(response => {
+            if (response == 'granted') {
+              hasSensorPermission = true;
+            }
+          })
+          .catch(alert)
+        }
+      }
+    })
+    .catch(alert)
+  }
+}
+
 var socket = io(); // the networking library
 
 var clientData = {};
@@ -121,42 +144,57 @@ function drawData(color,hW,hH,data){
   
 }
 
+function screenOfDeath(msg){
+  textSize(18);
+  background(0);
+  fill(255);
+  noStroke();
+  textAlign(CENTER);
+  text(msg,width/2,height/2);
+}
+
 
 function draw() {
-  textSize(16);
-  if (status == "approve"){
   
-    clientData.rotX = rotationX;
-    clientData.rotY = rotationY;
-    clientData.rotZ = rotationZ;
-    clientData.accX = accelerationX;
-    clientData.accY = accelerationY;
-    clientData.accZ = accelerationZ;
-
-    let hW = width;
-    let hH = height/2;
-    if (width > height){
-      hW = width/2;
-      hH = height;
-    }
-
-    drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
-
-    if (height>width){
-      translate(0,hH);
-    }else{
-      translate(hW,0);
-    }
-
-    drawData(colors[1],hW,hH,clientData);
-
-  }else if (status == "reject"){
-    background(0);
-    fill(255);
-    noStroke();
-    textAlign(CENTER);
-    text("Sorry, room is full! Please come back later...",width/2,height/2);
+  
+  if (!hasSensorPermission){
+    
   }
+  if (status == "reject"){
+    screenOfDeath("Sorry, room is full!\nPlease come back later...");
+    return;
+  }
+  if (status == "unknown"){
+    screenOfDeath("Sorry, room is full!\nPlease come back later...");
+    return;
+  }
+  
+  
+  clientData.rotX = rotationX;
+  clientData.rotY = rotationY;
+  clientData.rotZ = rotationZ;
+  clientData.accX = accelerationX;
+  clientData.accY = accelerationY;
+  clientData.accZ = accelerationZ;
+
+  let hW = width;
+  let hH = height/2;
+  if (width > height){
+    hW = width/2;
+    hH = height;
+  }
+
+  drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
+
+  if (height>width){
+    translate(0,hH);
+  }else{
+    translate(hW,0);
+  }
+
+  drawData(colors[1],hW,hH,clientData);
+
+  
   
 }
 

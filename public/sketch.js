@@ -123,30 +123,40 @@ function drawData(color,hW,hH,data){
 
 
 function draw() {
-  clientData.rotX = rotationX;
-  clientData.rotY = rotationY;
-  clientData.rotZ = rotationZ;
-  clientData.accX = accelerationX;
-  clientData.accY = accelerationY;
-  clientData.accZ = accelerationZ;
+  textSize(16);
+  if (status == "approve"){
   
-  let hW = width;
-  let hH = height/2;
-  if (width > height){
-    hW = width/2;
-    hH = height;
-  }
-  
-  drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
-  
-  if (height>width){
-    translate(0,hH);
-  }else{
-    translate(hW,0);
-  }
+    clientData.rotX = rotationX;
+    clientData.rotY = rotationY;
+    clientData.rotZ = rotationZ;
+    clientData.accX = accelerationX;
+    clientData.accY = accelerationY;
+    clientData.accZ = accelerationZ;
 
-  drawData(colors[1],hW,hH,clientData);
-  
+    let hW = width;
+    let hH = height/2;
+    if (width > height){
+      hW = width/2;
+      hH = height;
+    }
+
+    drawData(colors[0],hW,hH,serverData[Object.keys(serverData)[0]]);
+
+    if (height>width){
+      translate(0,hH);
+    }else{
+      translate(hW,0);
+    }
+
+    drawData(colors[1],hW,hH,clientData);
+
+  }else if (status == "reject"){
+    background(0);
+    fill(255);
+    noStroke();
+    textAlign(CENTER);
+    text("Sorry, room is full! Please come back later...",width/2,height/2);
+  }
   
 }
 

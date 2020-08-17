@@ -1,6 +1,4 @@
 // server.js
-// where everyone's data got sent to everyone else
-
 
 const express = require("express");
 const app = express();
@@ -15,6 +13,8 @@ var io = require('socket.io')(server);
 var serverData = {}; // everyone's data
 
 function newConnection(socket){
+  console.log(io.engine.clientsCount);
+  
 	console.log('new connection: ' + socket.id);
   
   socket.on('client-start', onClientStart);

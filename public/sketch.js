@@ -31,9 +31,8 @@ function begPermission(){
               window.ondevicemotion = function(event) {
                 if (!event.acceleration){
                   
-                  let grav = transf3d(-9.8,0,0, radians(rotationX),radians(rotationY),radians(rotationZ), 0,0,0);
-                  
-                  alert(grav[1]);
+                  let grav = transf3d(-9.8,0,0, 0,radians(rotationY),radians(rotationX), 0,0,0);
+
                   clientData.accX = event.accelerationIncludingGravity.x-grav[2];
                   clientData.accY = event.accelerationIncludingGravity.y-grav[1];
                   clientData.accZ = event.accelerationIncludingGravity.z-grav[0];

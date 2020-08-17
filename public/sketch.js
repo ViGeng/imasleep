@@ -7,27 +7,29 @@
 /* global describe io*/
 // now any other lint errors will be your own problem
 
-let hasSensorPermission = true;
+let hasSensorPermission = !(DeviceOrientationEvent.requestPermission || DeviceMotionEvent.requestPermission);
+
 
 function begPermission(){
-  if (DeviceOrientationEvent.requestPermission){
-    hasSensorPermission = false;
-    DeviceOrientationEvent.requestPermission()
-    .then(response => {
-      if (response == 'granted') {
+//   if (DeviceOrientationEvent.requestPermission){
+//     DeviceOrientationEvent.requestPermission()
+//     .then(response => {
+//       if (response == 'granted') {
+        
         if (DeviceMotionEvent.requestPermission){
           DeviceMotionEvent.requestPermission()
           .then(response => {
             if (response == 'granted') {
               hasSensorPermission = true;
+              
             }
           })
           .catch(alert)
         }
-      }
-    })
-    .catch(alert)
-  }
+  //     }
+  //   })
+  //   .catch(alert)
+  // }
 }
 
 var socket = io(); // the networking library
@@ -158,14 +160,15 @@ function draw() {
   
   
   if (!hasSensorPermission){
-    
+    screenOfDeath("Tap the screen\nto request sensor permissions...");
+    return;
   }
   if (status == "reject"){
     screenOfDeath("Sorry, room is full!\nPlease come back later...");
     return;
   }
   if (status == "unknown"){
-    screenOfDeath("Sorry, room is full!\nPlease come back later...");
+    screenOfDeath("Waiting for server to usher you...");
     return;
   }
   
@@ -196,6 +199,12 @@ function draw() {
 
   
   
+}
+
+function touchEnded() {
+  if (!hasSensorPermission){
+    begPermission();
+  }
 }
 
 

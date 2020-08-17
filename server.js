@@ -1,4 +1,5 @@
 // server.js
+const MAX_PLAYERS = 2;
 
 const express = require("express");
 const app = express();
@@ -17,7 +18,7 @@ var numPlayers = 0;
 function newConnection(socket){
   console.log('new connection: ' + socket.id);
   
-  if (numPlayers >= 2){
+  if (numPlayers >= MAX_PLAYERS){
     socket.emit("connection-reject");
     return;
   }
@@ -30,7 +31,13 @@ function newConnection(socket){
   })
 
   let timer = setInterval(function(){
-		socket.emit('server-update', serverData);
+    var others = {};
+    for (var k in serverData){
+      if (k != socket.id){
+        others[k] = serverData[k];
+      }
+    }
+		socket.emit('server-update', others);
 	}, 10);
   
   socket.on('disconnect', function(){

@@ -30,9 +30,12 @@ function begPermission(){
               hasSensorPermission = true;
               window.ondevicemotion = function(event) {
                 if (!event.acceleration){
-                  clientData.accX = event.accelerationIncludingGravity.x;
-                  clientData.accY = event.accelerationIncludingGravity.y;
-                  clientData.accZ = event.accelerationIncludingGravity.z+9.8;
+                  
+                  let grav = transf3d(9.8,0,0, 0,0,0, 0,0,0);
+
+                  clientData.accX = event.accelerationIncludingGravity.x-grav[0];
+                  clientData.accY = event.accelerationIncludingGravity.y-grav[1];
+                  clientData.accZ = event.accelerationIncludingGravity.z-grav[2];
                 }
               }
             }
@@ -57,7 +60,7 @@ var colors = [
   [255,120,180],
 ]
 
-function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
+function transf3d(x,y,z,rx,ry,rz,dx,dy,dz){
   let rotx = a=> [1,0,0,0, 0,cos(a),-sin(a),0, 0,sin(a),cos(a),0, 0,0,0,1]
   let roty = a=> [cos(a),0,sin(a),0, 0,1,0,0, -sin(a),0,cos(a),0, 0,0,0,1]
   let rotz = a=> [cos(a),-sin(a),0,0, sin(a),cos(a),0,0, 0,0,1,0, 0,0,0,1]
@@ -66,8 +69,12 @@ function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
   let proj = (f,v)=> [(f)*(v)[0]/(v)[2],(f)*(v)[1]/(v)[2]];
   
   let T = mult([1,0,0,dx, 0,1,0,dy, 0,0,1,dz, 0,0,0,1],mult(rotz(rz),mult(roty(ry),rotx(rx))));
+  return trfm(T,[x,y,z]);
+}
 
-  return proj(f,trfm(T,[x,y,z]));
+function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
+  let proj = (f,v)=> [(f)*(v)[0]/(v)[2],(f)*(v)[1]/(v)[2]];
+  return proj(f,transf3d(x,y,z,rx,ry,rz,dx,dy,dz));
 }
 
 
@@ -213,7 +220,7 @@ function draw() {
     hH = height;
   }
   
-  drawData(colors[0],"THEY",hW,hH,serverData[Object.keys(serverData)[0]]);
+  drawData(colors[0],"THEM",hW,hH,serverData[Object.keys(serverData)[0]]);
 
   if (height>width){
     translate(0,hH);

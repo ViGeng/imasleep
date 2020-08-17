@@ -15,8 +15,8 @@ var serverData = {}; // stores other users's hands from the server
 var status = "unknown";
 
 var colors = [
-  [200,200,255],
-  [255,200,200],
+  [120,160,255],
+  [255,120,160],
 ]
 
 // update our data everytime the server sends us an update
@@ -33,6 +33,13 @@ function setup() {
 
 
 function draw() {
-  rect(0,0,)
+  noStroke();
+  fill(...colors[0])
+  rect(0,0,width,height/2);
+  
+  translate(0,height/2);
+  fill(...colors[1])
+  rect(0,0,width,height/2);
+  
   
 }

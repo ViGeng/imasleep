@@ -7,16 +7,21 @@
 /* global describe io*/
 // now any other lint errors will be your own problem
 
-let isSafari = !!window.navigator.userAgent.match(/Safari/i) && !window.navigator.userAgent.match(/Android/i);
+
+
 let hasSensorPermission = !(DeviceOrientationEvent.requestPermission || DeviceMotionEvent.requestPermission);
-var flipXY = false;
 
-// iOS screws up X/Y axis if Safari starts up in portrait mode
-if (isSafari && window.innerHeight>window.innerWidth){
-  flipXY = true;
-}
+// 3d transformation helpers
+let ROTX = a=> [1,0,0,0, 0,cos(a),-sin(a),0, 0,sin(a),cos(a),0, 0,0,0,1]
+let ROTY = a=> [cos(a),0,sin(a),0, 0,1,0,0, -sin(a),0,cos(a),0, 0,0,0,1]
+let ROTZ = a=> [cos(a),-sin(a),0,0, sin(a),cos(a),0,0, 0,0,1,0, 0,0,0,1]
+let MULT = (A,B)=> [(A)[0]*(B)[0]+(A)[1]*(B)[4]+(A)[2]*(B)[8]+(A)[3]*(B)[12],(A)[0]*(B)[1]+(A)[1]*(B)[5]+(A)[2]*(B)[9]+(A)[3]*(B)[13],(A)[0]*(B)[2]+(A)[1]*(B)[6]+(A)[2]*(B)[10]+(A)[3]*(B)[14],(A)[0]*(B)[3]+(A)[1]*(B)[7]+(A)[2]*(B)[11]+(A)[3]*(B)[15],(A)[4]*(B)[0]+(A)[5]*(B)[4]+(A)[6]*(B)[8]+(A)[7]*(B)[12],(A)[4]*(B)[1]+(A)[5]*(B)[5]+(A)[6]*(B)[9]+(A)[7]*(B)[13],(A)[4]*(B)[2]+(A)[5]*(B)[6]+(A)[6]*(B)[10]+(A)[7]*(B)[14],(A)[4]*(B)[3]+(A)[5]*(B)[7]+(A)[6]*(B)[11]+(A)[7]*(B)[15],(A)[8]*(B)[0]+(A)[9]*(B)[4]+(A)[10]*(B)[8]+(A)[11]*(B)[12],(A)[8]*(B)[1]+(A)[9]*(B)[5]+(A)[10]*(B)[9]+(A)[11]*(B)[13],(A)[8]*(B)[2]+(A)[9]*(B)[6]+(A)[10]*(B)[10]+(A)[11]*(B)[14],(A)[8]*(B)[3]+(A)[9]*(B)[7]+(A)[10]*(B)[11]+(A)[11]*(B)[15],(A)[12]*(B)[0]+(A)[13]*(B)[4]+(A)[14]*(B)[8]+(A)[15]*(B)[12],(A)[12]*(B)[1]+(A)[13]*(B)[5]+(A)[14]*(B)[9]+(A)[15]*(B)[13],(A)[12]*(B)[2]+(A)[13]*(B)[6]+(A)[14]*(B)[10]+(A)[15]*(B)[14],(A)[12]*(B)[3]+(A)[13]*(B)[7]+(A)[14]*(B)[11]+(A)[15]*(B)[15]]
+let TRFM = (A,v)=> [((A)[0]*(v)[0]+(A)[1]*(v)[1]+(A)[2]*(v)[2]+(A)[3])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15]),((A)[4]*(v)[0]+(A)[5]*(v)[1]+(A)[6]*(v)[2]+(A)[7])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15]),((A)[8]*(v)[0]+(A)[9]*(v)[1]+(A)[10]*(v)[2]+(A)[11])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15])]
+let PROJ = (f,v)=> [(f)*(v)[0]/(v)[2],(f)*(v)[1]/(v)[2]];
 
 
+// iOS 13 requires pages to beg for user permission before accessing sensors.
+// it must also be triggered by a 'touchend'
 function begPermission(){
   if (DeviceOrientationEvent.requestPermission){
     DeviceOrientationEvent.requestPermission()
@@ -29,14 +34,31 @@ function begPermission(){
             if (response == 'granted') {
               hasSensorPermission = true;
               window.ondevicemotion = function(event) {
+                
+                // devices such as iOS 13 doesn't have accleration,
+                // instead they have accelerationIncludingGravity, producing inconsistent behavior.
+                // here we patch it by canelling out the gravitational acclerration.
+                // alternatively, we add the gravitational acceleration to android phones.
                 if (!event.acceleration){
                   
-                  let grav = transf3d(-9.8,0,0, 0,radians(rotationY),radians(rotationX), 0,0,0);
-
-                  clientData.accX = event.accelerationIncludingGravity.x-grav[2];
-                  clientData.accY = event.accelerationIncludingGravity.y-grav[1];
-                  clientData.accZ = event.accelerationIncludingGravity.z-grav[0];
+                  // compute gravitational acceleration's component on X Y Z axes based on gyroscope
+                  // g = ~ 9.80665
+                  let grav = TRFM(MULT(
+                    ROTY(radians(rotationY)),
+                    ROTX(radians(rotationX))
+                  ),[0,0,-9.80665]);
+                  
+                  clientData.accX =  (event.accelerationIncludingGravity.x+grav[0]);
+                  clientData.accY =  (event.accelerationIncludingGravity.y+grav[1]);
+                  clientData.accZ =  (event.accelerationIncludingGravity.z-grav[2]);
+                  
+                  // p5 appears to be doubling the acceleration:
+                  // https://github.com/processing/p5.js/blob/main/src/events/acceleration.js#L647
+                  clientData.accX *= 2;
+                  clientData.accY *= 2;
+                  clientData.accZ *= 2;
                 }
+                
               }
             }
           })
@@ -60,21 +82,11 @@ var colors = [
   [255,120,180],
 ]
 
-function transf3d(x,y,z,rx,ry,rz,dx,dy,dz){
-  let rotx = a=> [1,0,0,0, 0,cos(a),-sin(a),0, 0,sin(a),cos(a),0, 0,0,0,1]
-  let roty = a=> [cos(a),0,sin(a),0, 0,1,0,0, -sin(a),0,cos(a),0, 0,0,0,1]
-  let rotz = a=> [cos(a),-sin(a),0,0, sin(a),cos(a),0,0, 0,0,1,0, 0,0,0,1]
-  let mult = (A,B)=> [(A)[0]*(B)[0]+(A)[1]*(B)[4]+(A)[2]*(B)[8]+(A)[3]*(B)[12],(A)[0]*(B)[1]+(A)[1]*(B)[5]+(A)[2]*(B)[9]+(A)[3]*(B)[13],(A)[0]*(B)[2]+(A)[1]*(B)[6]+(A)[2]*(B)[10]+(A)[3]*(B)[14],(A)[0]*(B)[3]+(A)[1]*(B)[7]+(A)[2]*(B)[11]+(A)[3]*(B)[15],(A)[4]*(B)[0]+(A)[5]*(B)[4]+(A)[6]*(B)[8]+(A)[7]*(B)[12],(A)[4]*(B)[1]+(A)[5]*(B)[5]+(A)[6]*(B)[9]+(A)[7]*(B)[13],(A)[4]*(B)[2]+(A)[5]*(B)[6]+(A)[6]*(B)[10]+(A)[7]*(B)[14],(A)[4]*(B)[3]+(A)[5]*(B)[7]+(A)[6]*(B)[11]+(A)[7]*(B)[15],(A)[8]*(B)[0]+(A)[9]*(B)[4]+(A)[10]*(B)[8]+(A)[11]*(B)[12],(A)[8]*(B)[1]+(A)[9]*(B)[5]+(A)[10]*(B)[9]+(A)[11]*(B)[13],(A)[8]*(B)[2]+(A)[9]*(B)[6]+(A)[10]*(B)[10]+(A)[11]*(B)[14],(A)[8]*(B)[3]+(A)[9]*(B)[7]+(A)[10]*(B)[11]+(A)[11]*(B)[15],(A)[12]*(B)[0]+(A)[13]*(B)[4]+(A)[14]*(B)[8]+(A)[15]*(B)[12],(A)[12]*(B)[1]+(A)[13]*(B)[5]+(A)[14]*(B)[9]+(A)[15]*(B)[13],(A)[12]*(B)[2]+(A)[13]*(B)[6]+(A)[14]*(B)[10]+(A)[15]*(B)[14],(A)[12]*(B)[3]+(A)[13]*(B)[7]+(A)[14]*(B)[11]+(A)[15]*(B)[15]]
-  let trfm = (A,v)=> [((A)[0]*(v)[0]+(A)[1]*(v)[1]+(A)[2]*(v)[2]+(A)[3])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15]),((A)[4]*(v)[0]+(A)[5]*(v)[1]+(A)[6]*(v)[2]+(A)[7])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15]),((A)[8]*(v)[0]+(A)[9]*(v)[1]+(A)[10]*(v)[2]+(A)[11])/((A)[12]*(v)[0]+(A)[13]*(v)[1]+(A)[14]*(v)[2]+(A)[15])]
-  let proj = (f,v)=> [(f)*(v)[0]/(v)[2],(f)*(v)[1]/(v)[2]];
-  
-  let T = mult([1,0,0,dx, 0,1,0,dy, 0,0,1,dz, 0,0,0,1],mult(rotz(rz),mult(roty(ry),rotx(rx))));
-  return trfm(T,[x,y,z]);
-}
 
+// project a 3d vertex into 2d using simple pinhole camera model
 function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
-  let proj = (f,v)=> [(f)*(v)[0]/(v)[2],(f)*(v)[1]/(v)[2]];
-  return proj(f,transf3d(x,y,z,rx,ry,rz,dx,dy,dz));
+  let T = MULT([1,0,0,dx, 0,1,0,dy, 0,0,1,dz, 0,0,0,1],MULT(ROTY(ry),MULT(ROTX(rx),ROTZ(rz))));
+  return PROJ(f,TRFM(T,[x,y,z]));
 }
 
 
@@ -150,7 +162,7 @@ function drawSensorsData(color,label,hW,hH,data){
   
   push();
   translate(hW*3/4,hH/2);
-  var cam = [-radians(data.rotY),-radians(data.rotX),-radians(data.rotZ), 0,0,20, 100];
+  var cam = [-data.rotX,-data.rotY,-data.rotZ, 0,0,20, 100];
   stroke(255);
   let [va,vb,vc,vd, ve,vf,vg,vh] = [
     vertex3d(-8,-8,-8, ...cam),
@@ -220,9 +232,9 @@ function draw() {
   }
   
   
-  clientData.rotX = flipXY?rotationY:rotationX;
-  clientData.rotY = flipXY?-rotationX:rotationY;
-  clientData.rotZ = rotationZ;
+  clientData.rotX = radians([-rotationY,-rotationX,rotationY][~~(window.orientation/90)+1]);
+  clientData.rotY = radians([-rotationX, rotationY,rotationX][~~(window.orientation/90)+1]);
+  clientData.rotZ = radians(rotationZ);
   clientData.accX = accelerationX || clientData.accX;
   clientData.accY = accelerationY || clientData.accY;
   clientData.accZ = accelerationZ || clientData.accZ;

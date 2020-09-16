@@ -1,8 +1,8 @@
 // server.js
 // this is the "hub" where player's data got sent to each other
 
-const MAX_PLAYERS = 2; // maximum number of players
-                       // 2 in this case, you can change it to another number
+const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
+                       // you can freely change it to another number here,
                        // but will need to update the drawing code in public/sketch.js accordingly
 
 // express (https://expressjs.com/) is a simple node.js framework for writing servers

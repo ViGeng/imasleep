@@ -79,6 +79,7 @@ var serverData = {}; // stores other users's data from the server
 
 var status = "unknown"; // or 'approve', or 'reject', depending on whether the server decides to let you in
 
+// RGB color backgrounds for the two players
 var colors = [
   [120,200,255],
   [255,120,180],
@@ -92,7 +93,7 @@ function vertex3d(x,y,z,rx,ry,rz,dx,dy,dz,f){
 }
 
 
-// update our data everytime the server sends us an update
+// update status when server tells us whether they approve or reject our request to join a room
 socket.on('connection-approve', function(data){
   status = "approve";
 })
@@ -100,15 +101,19 @@ socket.on('connection-reject', function(data){
   status = "reject";
 })
 
+// update our data everytime the server sends us an update
 socket.on('server-update',function(data){
   serverData = data;
 })
 
+// p5.js setup
 function setup() {
   createCanvas(window.innerWidth,window.innerHeight);  
 
 }
 
+// visualize sensor data
+// you'll probably replace these with your own drawings
 function drawSensorsData(color,label,hW,hH,data){
   noStroke();
   fill(...color)
@@ -125,6 +130,9 @@ function drawSensorsData(color,label,hW,hH,data){
     text("Nobody there.",8,64);
     return;
   }
+  
+  
+  // draw arrow for acceleration
   
   noFill();
   
@@ -161,6 +169,7 @@ function drawSensorsData(color,label,hW,hH,data){
   }  
   pop();
   
+  // draw 3D box for rotation
   
   push();
   translate(hW*3/4,hH/2);
@@ -195,6 +204,7 @@ function drawSensorsData(color,label,hW,hH,data){
     
 }
 
+// visualize touches
 function drawTouchesData(color,data){
   if (!data || !data.touches){
     return;
@@ -207,6 +217,7 @@ function drawTouchesData(color,data){
   
 }
 
+// show error screen when e.g. server rejects user
 function screenOfDeath(msg){
   textSize(18);
   background(0);
@@ -216,7 +227,7 @@ function screenOfDeath(msg){
   text(msg,width/2,height/2);
 }
 
-
+// p5.js draw loop
 function draw() {
   
   
@@ -234,6 +245,9 @@ function draw() {
   }
   
   
+  // collect all the info and update this client's data
+  
+  // make rotationX/Y/Z relative to phone orientation
   clientData.rotX = radians([-rotationY,-rotationX,rotationY][~~(window.orientation/90)+1]);
   clientData.rotY = radians([-rotationX, rotationY,rotationX][~~(window.orientation/90)+1]);
   clientData.rotZ = radians(rotationZ);
@@ -242,9 +256,15 @@ function draw() {
   clientData.accZ = accelerationZ || clientData.accZ;
   clientData.touches = touches;
   
+  // send this client's data the server
   socket.emit('client-update',clientData);
 
+  // the other player's data. Since this demo only allows 2 players, we just grab
+  // the first item in the table. Use a loop to iterate serverData if you want more than
+  // 2 players (check out sensors-chorus or sensors-rooms)
   let otherData = serverData[Object.keys(serverData)[0]];
+  
+  // visualize the sensors data
   
   let hW = width;
   let hH = height/2;
@@ -263,7 +283,6 @@ function draw() {
 
   drawSensorsData(colors[1],"ME",hW,hH,clientData);
 
-  
   resetMatrix();
   drawTouchesData(colors[0],otherData);
   drawTouchesData(colors[1],clientData);

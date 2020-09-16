@@ -101,7 +101,7 @@ socket.on('connection-reject', function(data){
   status = "reject";
 })
 
-// update our data everytime the server sends us an update
+// update our copy everytime the server sends us an update
 socket.on('server-update',function(data){
   serverData = data;
 })

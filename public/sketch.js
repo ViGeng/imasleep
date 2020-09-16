@@ -8,10 +8,12 @@
 // now any other lint errors will be your own problem
 
 
-
+// if on mobile Safari, we need to request permission to read sensor data
 let hasSensorPermission = !(DeviceOrientationEvent.requestPermission || DeviceMotionEvent.requestPermission);
 
 // 3d transformation helpers
+// no need to comprehend if not interested, but these are the math that rotates/translates objects in 3D
+// and project them onto 2D planes for display
 let ROTX = a=> [1,0,0,0, 0,cos(a),-sin(a),0, 0,sin(a),cos(a),0, 0,0,0,1]
 let ROTY = a=> [cos(a),0,sin(a),0, 0,1,0,0, -sin(a),0,cos(a),0, 0,0,0,1]
 let ROTZ = a=> [cos(a),-sin(a),0,0, sin(a),cos(a),0,0, 0,0,1,0, 0,0,0,1]
@@ -72,10 +74,10 @@ function begPermission(){
 
 var socket = io(); // the networking library
 
-var clientData = {};
-var serverData = {}; // stores other users's hands from the server
+var clientData = {}; // stores this particular client's data
+var serverData = {}; // stores other users's data from the server
 
-var status = "unknown";
+var status = "unknown"; // or 'approve', or 'reject', depending on whether the server decides to let you in
 
 var colors = [
   [120,200,255],

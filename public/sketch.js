@@ -7,8 +7,7 @@
 var socket = io(); // the networking library
 var clientData = {}; // stores this particular client's data
 var serverData = {}; // stores other users's data from the server
-var status = "unknown"; // or 'approve', or 'reject', depending on whether the server decides to let you in
-let packetCount = 0; 
+var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -28,8 +27,7 @@ function draw() {
   if (status == "reject"){
     showMyErrorScreen("Sorry, room is full!\nPlease come back later...");
     return;
-  }
-  if (status == "unknown"){
+  } else if (status == "unknown"){
     showMyErrorScreen("Waiting for server to usher you...");
     return;
   }
@@ -124,10 +122,9 @@ socket.on('server-update',function(data){
   // Update our copy eof the other player's data
   // everytime the server sends us an update
   serverData = data;
-  packetCount++;
 })
 
-// It may happen that you need to restart the server. 
+// It could happen that you need to restart the server. 
 // For example, if you encounter “room is full” while debugging.
 // If you put the magic word “crash” in the url (like: http://myapp.glitch.me/?crash)
 // then the client will send a message to server to tell it to crash and restart.

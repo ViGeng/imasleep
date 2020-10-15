@@ -19,7 +19,7 @@ var socket = io(); // the networking library
 var clientData = {}; // stores this particular client's data
 var serverData = {}; // stores other users's data from the server
 var status = "unknown"; // or 'approve', or 'reject', depending on whether the server decides to let you in
-
+let packetCount = 0; 
 
 //------------------------------------------------
 // Event handlers for the Socket library. 
@@ -39,6 +39,7 @@ socket.on('server-update',function(data){
   // Update our copy eof the other player's data
   // everytime the server sends us an update
   serverData = data;
+  packetCount
 })
 
 
@@ -53,7 +54,8 @@ var colors = [
 //------------------------------------------------
 // The main p5.js setup
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(window.innerWidth,window.innerHeight)
+  // createCanvas(windowWidth, windowHeight);
 }
 
 //------------------------------------------------
@@ -92,8 +94,21 @@ function draw() {
 // visualize touches
 function drawTouchesData(color,data){
   if (!data || !data.touches){
+    
+    fill(255);
+    textSize(16);
+    text("Nobody there.",8,64);
+      
     return;
   }
+  
+  fill(255);
+  textSize(32);
+  textAlign(LEFT);
+  text(data.touches.length,20,color[0]);
+  text(status,20,60);
+  
+  
   for (var i = 0; i < data.touches.length; i++){
     // FYI: The '...' is the JavaScript ES6 "spread" syntax.
     fill(...color);

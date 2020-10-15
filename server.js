@@ -1,5 +1,6 @@
 // server.js
-// this is the "hub" where player's data got sent to each other
+// this is the "hub" where player's data gets sent to each other.
+// You 'probably' won't need to modify this file.
 
 const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
                        // you can freely change it to another number here,
@@ -23,7 +24,6 @@ var io = require('socket.io')(server);
 
 
 var serverData = {}; // everyone's data
-
 var numPlayers = 0; // current number of players
 
 console.log("listening...")

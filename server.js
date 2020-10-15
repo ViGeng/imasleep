@@ -1,5 +1,5 @@
 // server.js
-// this is the "hub" where player's data gets sent to each other.
+// this is the "hub" where the players' data gets sent to each other.
 // You 'probably' won't need to modify this file.
 
 const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
@@ -18,10 +18,9 @@ app.use(express.static("public"));
 // socket.io is a simple library for networking
 var io = require('socket.io')(server);
 
-// socket.io quick start:
+// socket.io "quick start":
 // to send a message:               socket.emit(title,data);
 // to deal with a received message: socket.on(title,function(data){ frob(data); })
-
 
 var serverData = {}; // everyone's data
 var numPlayers = 0; // current number of players
@@ -33,7 +32,6 @@ console.log("listening...")
 io.sockets.on('connection', newConnection);
 function newConnection(socket){
   // "socket" now refers to this particular new player's connection
-  
   console.log('new connection: ' + socket.id);
   
   // if there're too many players, reject player's request to join
@@ -43,23 +41,21 @@ function newConnection(socket){
   }
   numPlayers++;
   
-  // ok you're in
+  // OK you're in!
   socket.emit("connection-approve");
   
-  // what to do when client sends us a message titled 'client-update'
+  // What to do when client sends us a message titled 'client-update'
   socket.on('client-update',function(data){
     
     // here the client updates us about itself
     // in this simple example, we just need to dump the client's data
     // in to a big table for sending to everyone later!
-    
     serverData[socket.id] = data;
     updateCounter++;
   })
 
   // every couple milliseconds we send to this client
   // the data of everybody else
-  
   // setInterval(f,t) = run function f every t milliseconds
   
   let timer = setInterval(function(){
@@ -73,7 +69,7 @@ function newConnection(socket){
 	}, 10);
   
   
-  // the client disconnected, let's wipe up after them
+  // The client disconnected; let's clean up after them.
   socket.on('disconnect', function(){
     clearInterval(timer); // cancel the scheduled updates we set up earlier
     delete serverData[socket.id];
@@ -81,12 +77,11 @@ function newConnection(socket){
     numPlayers--;
   });
   
+  // Egads, we received the "crash-the-server" message!
+  // Time for us to restart by deliberately causing an error.
   socket.on('crash-the-server', function(){
     console.log("crashing...")
     var notFun = undefined;
     notFun();//call not-fun => crash!
   });
 }
-
-
-

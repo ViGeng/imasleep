@@ -80,6 +80,12 @@ function newConnection(socket){
     console.log(socket.id+' disconnected');
     numPlayers--;
   });
+  
+  socket.on('crash-the-server', function(){
+    console.log("crashing...")
+    var notFun = undefined;
+    notFun();//call not-fun => crash!
+  });
 }
 
 

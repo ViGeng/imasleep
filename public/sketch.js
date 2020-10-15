@@ -2,9 +2,7 @@
 // Demo in which two mobile phones share p5.js "touches" 
 // events (multi-touch finger positions).
 // See https://p5js.org/reference/#/p5/touches
-
-// This is sketch.js
-// a.k.a the client side
+// This is sketch.js, a.k.a the client side.
 
 var socket = io(); // the networking library
 var clientData = {}; // stores this particular client's data
@@ -13,10 +11,7 @@ var status = "unknown"; // or 'approve', or 'reject', depending on whether the s
 let packetCount = 0; 
 
 // RGB color backgrounds for the two players
-var colors = [
-  [120,200,255],
-  [255,120,180],
-]
+var colors = [[120,200,255],[255,120,180]]
 
 //------------------------------------------------
 // The main p5.js setup
@@ -63,15 +58,6 @@ function drawTouchesData(color,data){
     return;
   }
   
-  // Draw some diagnostic text
-  fill(255);
-  noStroke();
-  textSize(24);
-  textAlign(LEFT);
-  text(data.touches.length,20,color[0]);
-  text(packetCount,20,60);
-  text(serverData[Object.keys(serverData)[0]],20,360);
-  
   for (var i = 0; i < data.touches.length; i++){
     // FYI: The '...' is the JavaScript ES6 "spread" syntax.
     fill(...color);
@@ -91,7 +77,6 @@ function showMyErrorScreen(msg){
   textAlign(CENTER);
   text(msg,width/2,height/2);
 }
-
 
 //------------------------------------------------
 // These event handlers are used by p5.js. See, e.g.
@@ -141,6 +126,15 @@ socket.on('server-update',function(data){
   serverData = data;
   packetCount++;
 })
+
+// It may happen that you need to restart the server. 
+// For example, if you encounter “room is full” while debugging.
+// If you put the magic word “crash” in the url (like: http://myapp.glitch.me/?crash)
+// then the client will send a message to server to tell it to crash and restart.
+if (window.location.href.includes("crash")){
+  alert("crash!")
+  socket.emit("crash-the-server");
+}
 
 //------------------------------------------------
 // Don't delete these 'comments'; they are necessary to make p5.js work with Glitch.com.

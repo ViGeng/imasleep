@@ -25,6 +25,7 @@ var io = require('socket.io')(server);
 
 var serverData = {}; // everyone's data
 var numPlayers = 0; // current number of players
+var updateCounter = 0; 
 
 console.log("listening...")
 
@@ -53,6 +54,7 @@ function newConnection(socket){
     // in to a big table for sending to everyone later!
     
     serverData[socket.id] = data;
+    updateCounter++;
   })
 
   // every couple milliseconds we send to this client

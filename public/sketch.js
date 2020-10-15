@@ -43,13 +43,11 @@ socket.on('server-update',function(data){
 })
 
 
-
 // RGB color backgrounds for the two players
 var colors = [
   [120,200,255],
   [255,120,180],
 ]
-
 
 //------------------------------------------------
 // The main p5.js setup

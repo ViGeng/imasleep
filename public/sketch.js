@@ -39,7 +39,7 @@ socket.on('server-update',function(data){
   // Update our copy eof the other player's data
   // everytime the server sends us an update
   serverData = data;
-  packetCount
+  packetCount++;
 })
 
 
@@ -94,20 +94,17 @@ function draw() {
 // visualize touches
 function drawTouchesData(color,data){
   if (!data || !data.touches){
-    
-    fill(255);
-    textSize(16);
-    text("Nobody there.",8,64);
-      
     return;
   }
   
+  // Draw some diagnostic text
   fill(255);
-  textSize(32);
+  noStroke();
+  textSize(24);
   textAlign(LEFT);
   text(data.touches.length,20,color[0]);
-  text(status,20,60);
-  
+  text(packetCount,20,60);
+  text(serverData[Object.keys(serverData)[0]],20,360);
   
   for (var i = 0; i < data.touches.length; i++){
     // FYI: The '...' is the JavaScript ES6 "spread" syntax.
@@ -137,9 +134,8 @@ function showMyErrorScreen(msg){
 function touchStarted(){
   var fs = fullscreen();
   if (!fs) {
-    // fullscreen(true);
+    // fullscreen(true); // uncomment this for fullscreen
   }
-  
   return false;
 }
 function touchMoved(){
@@ -150,9 +146,7 @@ function touchEnded() {
 }
 
 /* prevents the mobile browser from processing some default
- * touch events, like swiping left for "back" or scrolling
- * the page.
-
+ * touch events, like swiping left for "back" or scrolling the page.
 document.ontouchmove = function(event) {
     event.preventDefault();
 };
@@ -161,7 +155,3 @@ document.ontouchmove = function(event) {
 function windowResized() { //this detects when the window is resized, such as entering fullscreen mode, or changing orientation of the device.
   resizeCanvas(windowWidth, windowHeight); //resizes the canvas to the new dimensions 
 }
-
-
-
-

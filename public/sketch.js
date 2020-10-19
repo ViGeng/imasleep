@@ -20,6 +20,7 @@ function setup() {
 
 //------------------------------------------------
 // The main p5.js draw loop
+//
 function draw() {
   background (60,40,60);
   
@@ -50,15 +51,17 @@ function draw() {
 }
 
 //------------------------------------------------
-// visualize touches
+// Visualize "touches" (fingertips)
+//
 function drawTouchesData(color,data){
   if (!data || !data.touches){
     return;
   }
   
   for (var i = 0; i < data.touches.length; i++){
-    // Note: The '...' is the JavaScript ES6 "spread" syntax.
-    // 
+    // Note: The '...' below is the JavaScript ES6 "spread" syntax.
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+    // Useful for handling a variable number of arguments.
     fill(...color);
     
     stroke(255);
@@ -67,7 +70,7 @@ function drawTouchesData(color,data){
 }
 
 //------------------------------------------------
-// Show error screen if e.g. server rejects user
+// Show an error screen if there's a network problem.
 function showMyErrorScreen(msg){
   textSize(18);
   background(0);
@@ -79,12 +82,18 @@ function showMyErrorScreen(msg){
 
 //------------------------------------------------
 // These event handlers are used by p5.js. See, e.g.
-// https://p5js.org/reference/#/p5/touchStarted
+// https://p5js.org/reference/#/p5/touchStarted, etc.
 //
 function touchStarted(){
   var fs = fullscreen();
   if (!fs) {
-    // fullscreen(true); // uncomment this for fullscreen.
+    /* 
+      Uncomment the line below to put your app in fullscreen.
+      Note, on some devices, being in fullscreen can make it 
+      awkward to access useful things like the page-refresh button.
+      Perhaps just use this for final documentation.
+    */
+    // fullscreen(true); 
   }
   return false;
 }
@@ -125,8 +134,8 @@ socket.on('server-update',function(data){
   serverData = data;
 })
 
-// It could happen that you need to restart the server. 
-// For example, if you encounter “room is full” while debugging.
+// It could happen that you might need to restart the server. 
+// For example, if you encounter the “room is full” message while debugging.
 // If you put the magic word “crash” in the url (like: http://myapp.glitch.me/?crash)
 // then the client will send a message to server to tell it to crash and restart.
 if (window.location.href.includes("crash")){
@@ -134,7 +143,8 @@ if (window.location.href.includes("crash")){
   socket.emit("crash-the-server");
 }
 
-//------------------------------------------------
+
+//================================================
 // Don't delete these 'comments'; they are necessary to make p5.js work with Glitch.com.
 // First of all, shut glitch up about p5's global namespace pollution using this magic comment:
 /* global describe p5 setup draw P2D WEBGL ARROW CROSS HAND MOVE TEXT WAIT HALF_PI PI QUARTER_PI TAU TWO_PI DEGREES RADIANS DEG_TO_RAD RAD_TO_DEG CORNER CORNERS RADIUS RIGHT LEFT CENTER TOP BOTTOM BASELINE POINTS LINES LINE_STRIP LINE_LOOP TRIANGLES TRIANGLE_FAN TRIANGLE_STRIP QUADS QUAD_STRIP TESS CLOSE OPEN CHORD PIE PROJECT SQUARE ROUND BEVEL MITER RGB HSB HSL AUTO ALT BACKSPACE CONTROL DELETE DOWN_ARROW ENTER ESCAPE LEFT_ARROW OPTION RETURN RIGHT_ARROW SHIFT TAB UP_ARROW BLEND REMOVE ADD DARKEST LIGHTEST DIFFERENCE SUBTRACT EXCLUSION MULTIPLY SCREEN REPLACE OVERLAY HARD_LIGHT SOFT_LIGHT DODGE BURN THRESHOLD GRAY OPAQUE INVERT POSTERIZE DILATE ERODE BLUR NORMAL ITALIC BOLD BOLDITALIC LINEAR QUADRATIC BEZIER CURVE STROKE FILL TEXTURE IMMEDIATE IMAGE NEAREST REPEAT CLAMP MIRROR LANDSCAPE PORTRAIT GRID AXES frameCount deltaTime focused cursor frameRate getFrameRate setFrameRate noCursor displayWidth displayHeight windowWidth windowHeight width height fullscreen pixelDensity displayDensity getURL getURLPath getURLParams pushStyle popStyle popMatrix pushMatrix registerPromisePreload camera perspective ortho frustum createCamera setCamera setAttributes createCanvas resizeCanvas noCanvas createGraphics blendMode noLoop loop push pop redraw applyMatrix resetMatrix rotate rotateX rotateY rotateZ scale shearX shearY translate arc ellipse circle line point quad rect square triangle ellipseMode noSmooth rectMode smooth strokeCap strokeJoin strokeWeight bezier bezierDetail bezierPoint bezierTangent curve curveDetail curveTightness curvePoint curveTangent beginContour beginShape bezierVertex curveVertex endContour endShape quadraticVertex vertex alpha blue brightness color green hue lerpColor lightness red saturation background clear colorMode fill noFill noStroke stroke erase noErase createStringDict createNumberDict storeItem getItem clearStorage removeItem select selectAll removeElements createDiv createP createSpan createImg createA createSlider createButton createCheckbox createSelect createRadio createColorPicker createInput createFileInput createVideo createAudio VIDEO AUDIO createCapture createElement deviceOrientation accelerationX accelerationY accelerationZ pAccelerationX pAccelerationY pAccelerationZ rotationX rotationY rotationZ pRotationX pRotationY pRotationZ pRotateDirectionX pRotateDirectionY pRotateDirectionZ turnAxis setMoveThreshold setShakeThreshold isKeyPressed keyIsPressed key keyCode keyIsDown movedX movedY mouseX mouseY pmouseX pmouseY winMouseX winMouseY pwinMouseX pwinMouseY mouseButton mouseIsPressed requestPointerLock exitPointerLock touches createImage saveCanvas saveGif saveFrames loadImage image tint noTint imageMode pixels blend copy filter get loadPixels set updatePixels loadJSON loadStrings loadTable loadXML loadBytes httpGet httpPost httpDo createWriter save saveJSON saveJSONObject saveJSONArray saveStrings saveTable writeFile downloadFile abs ceil constrain dist exp floor lerp log mag map max min norm pow round sq sqrt fract createVector noise noiseDetail noiseSeed randomSeed random randomGaussian acos asin atan atan2 cos sin tan degrees radians angleMode textAlign textLeading textSize textStyle textWidth textAscent textDescent loadFont text textFont append arrayCopy concat reverse shorten shuffle sort splice subset float int str boolean byte char unchar hex unhex join match matchAll nf nfc nfp nfs split splitTokens trim day hour minute millis month second year plane box sphere cylinder cone ellipsoid torus orbitControl debugMode noDebugMode ambientLight specularColor directionalLight pointLight lights lightFalloff spotLight noLights loadModel model loadShader createShader shader resetShader normalMaterial texture textureMode textureWrap ambientMaterial emissiveMaterial specularMaterial shininess remove canvas drawingContext*/

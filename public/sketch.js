@@ -23,7 +23,7 @@ function setup() {
 function draw() {
   background (60,40,60);
   
-  // 1. Handle problematic network statuses
+  // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){
     showMyErrorScreen("Sorry, room is full!\nPlease come back later...");
     return;
@@ -44,7 +44,7 @@ function draw() {
   // two players (check out sensors-chorus or sensors-rooms)
   let otherData = serverData[Object.keys(serverData)[0]];
 
-  // 4. Draw the fingertips.
+  // 4. Draw the players' fingertips.
   drawTouchesData(colors[0],otherData);
   drawTouchesData(colors[1],clientData);
 }
@@ -57,7 +57,8 @@ function drawTouchesData(color,data){
   }
   
   for (var i = 0; i < data.touches.length; i++){
-    // FYI: The '...' is the JavaScript ES6 "spread" syntax.
+    // Note: The '...' is the JavaScript ES6 "spread" syntax.
+    // 
     fill(...color);
     
     stroke(255);

@@ -2,6 +2,11 @@
 // this is the "hub" where the players' data gets sent to each other.
 // You 'probably' won't need to modify this file.
 
+// Here's a little socket.io "quick start" summary:
+// to send a message:               socket.emit(title,data);
+// to deal with a received message: socket.on(title,function(data){ frob(data); })
+
+//========================================================================
 const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
                        // you can freely change it to another number here,
                        // but will need to update the drawing code in public/sketch.js accordingly
@@ -18,20 +23,17 @@ app.use(express.static("public"));
 // socket.io is a simple library for networking
 var io = require('socket.io')(server);
 
-// socket.io "quick start":
-// to send a message:               socket.emit(title,data);
-// to deal with a received message: socket.on(title,function(data){ frob(data); })
-
 var serverData = {}; // everyone's data
 var numPlayers = 0; // current number of players
 var updateCounter = 0; 
 
 console.log("listening...")
 
-// what to do when there's a new player connection:
+// What to do when there's a new player connection:
 io.sockets.on('connection', newConnection);
 function newConnection(socket){
-  // "socket" now refers to this particular new player's connection
+  
+  // Note: "socket" now refers to this particular new player's connection
   console.log('new connection: ' + socket.id);
   
   // if there're too many players, reject player's request to join
@@ -44,20 +46,20 @@ function newConnection(socket){
   // OK you're in!
   socket.emit("connection-approve");
   
-  // What to do when client sends us a message titled 'client-update'
+  
+  // What to do when client sends us a message entitled 'client-update'
   socket.on('client-update',function(data){
-    
-    // here the client updates us about itself
+    // Here the client updates us about itself
     // in this simple example, we just need to dump the client's data
-    // in to a big table for sending to everyone later!
+    // into a big table for sending to everyone later!
     serverData[socket.id] = data;
     updateCounter++;
   })
 
-  // every couple milliseconds we send to this client
-  // the data of everybody else
-  // setInterval(f,t) = run function f every t milliseconds
   
+  // Every few milliseconds we send, to this client,
+  // the data of everybody else's client.
+  // Note: setInterval(f,t) = runs function f every t milliseconds
   let timer = setInterval(function(){
     var others = {};
     for (var k in serverData){
@@ -69,7 +71,7 @@ function newConnection(socket){
 	}, 10);
   
   
-  // The client disconnected; let's clean up after them.
+  // What to do if the client disconnected: let's clean up after them.
   socket.on('disconnect', function(){
     clearInterval(timer); // cancel the scheduled updates we set up earlier
     delete serverData[socket.id];
@@ -82,6 +84,6 @@ function newConnection(socket){
   socket.on('crash-the-server', function(){
     console.log("crashing...")
     var notFun = undefined;
-    notFun();//call not-fun => crash!
+    notFun(); // calling the undefined notFun() causes a (desired) crash!
   });
 }

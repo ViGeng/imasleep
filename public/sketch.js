@@ -129,7 +129,7 @@ socket.on('connection-reject', function(data){
   status = "reject";
 })
 socket.on('server-update',function(data){
-  // Update our copy eof the other player's data
+  // Update our copy of the other players' data
   // everytime the server sends us an update
   serverData = data;
 })

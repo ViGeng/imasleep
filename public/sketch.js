@@ -6,7 +6,7 @@
 
 var socket = io(); // the networking library
 var clientData = {}; // stores this particular client's data
-var serverData = {}; // stores other users's data from the server
+var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 
 // RGB color backgrounds for the two players

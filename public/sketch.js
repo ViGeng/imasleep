@@ -16,6 +16,7 @@ var colors = [[120,200,255],[255,120,180]]
 // The main p5.js setup
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  console.log("test here");
 }
 
 //------------------------------------------------
@@ -23,6 +24,8 @@ function setup() {
 //
 function draw() {
   background (60,40,60);
+  stroke(255);
+  line(mouseX, mouseY, 0,0); 
   
   // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){

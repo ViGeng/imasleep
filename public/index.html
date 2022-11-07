@@ -6,6 +6,8 @@
 </body>
 
 <script>
+//comment these lines in order to make it work without
+//SSL on your machine
 var isOnHTTPS = window.location.href.startsWith("https");
 if (!isOnHTTPS){
   window.location.href = window.location.href.replace("http","https");

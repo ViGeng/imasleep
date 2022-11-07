@@ -62,6 +62,7 @@ function drawTouchesData(color,data){
   }
   
   for (var i = 0; i < data.touches.length; i++){
+  for (var i = 0; i < data.touches.length; i++){
     // Note: The '...' below is the JavaScript ES6 "spread" syntax.
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
     // Useful for handling a variable number of arguments.
@@ -69,6 +70,7 @@ function drawTouchesData(color,data){
     
     stroke(255);
     circle(data.touches[i].x,data.touches[i].y,90);
+  }
   }
 }
 

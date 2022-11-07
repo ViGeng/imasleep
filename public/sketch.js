@@ -47,12 +47,15 @@ function draw() {
   // Use a loop to iterate serverData if you want more than
   // two players (check out sensors-chorus or sensors-rooms)
   let otherData = serverData[Object.keys(serverData)[0]];
+  
+  for ()
 
-  // for (let i=0; i<otherData.length; i++){
-  //   drawTouchesData(colors[0],otherData[i]);  
+  // for (let i=0; i<Object.keys(serverData).length; i++){
+  //   let otherData = serverData[Object.keys(serverData)[i]];
+  //   drawTouchesData(colors[0],otherData);
   // }
   // 4. Draw the players' fingertips.
-  // drawTouchesData(colors[0],otherData);
+  drawTouchesData(colors[0],otherData);
   drawTouchesData(colors[1],clientData);
 }
 

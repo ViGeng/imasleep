@@ -48,7 +48,9 @@ function draw() {
   // two players (check out sensors-chorus or sensors-rooms)
   let otherData = serverData[Object.keys(serverData)[0]];
   
-  for ()
+  // for (var o in serverData){
+  //   drawTouchesData(colors[0],o);
+  // }
 
   // for (let i=0; i<Object.keys(serverData).length; i++){
   //   let otherData = serverData[Object.keys(serverData)[i]];

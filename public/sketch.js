@@ -16,7 +16,6 @@ var colors = [[120,200,255],[255,120,180]]
 // The main p5.js setup
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  console.log("test here");
 }
 
 //------------------------------------------------
@@ -48,14 +47,6 @@ function draw() {
   // two players (check out sensors-chorus or sensors-rooms)
   let otherData = serverData[Object.keys(serverData)[0]];
   
-  // for (var o in serverData){
-  //   drawTouchesData(colors[0],o);
-  // }
-
-  // for (let i=0; i<Object.keys(serverData).length; i++){
-  //   let otherData = serverData[Object.keys(serverData)[i]];
-  //   drawTouchesData(colors[0],otherData);
-  // }
   // 4. Draw the players' fingertips.
   drawTouchesData(colors[0],otherData);
   drawTouchesData(colors[1],clientData);
@@ -104,7 +95,7 @@ function touchStarted(){
       awkward to access useful things like the page-refresh button.
       Perhaps just use this for final documentation.
     */
-    // fullscreen(true); 
+    fullscreen(true); 
   }
   return false;
 }

@@ -39,7 +39,7 @@ function draw() {
   // Collect all the touches info and update this client's data.
   // Then send this client's data the server
   clientData.touches = touches;
-  socket.emit('client-update',clientData);
+  socket.emit('client-update', clientData);
 
   // 3. Fetch the other player's data. Since this demo only allows 
   // two players, we just grab the first item in the table. 
@@ -55,7 +55,7 @@ function draw() {
 //------------------------------------------------
 // Visualize "touches" (fingertips)
 //
-function drawTouchesData(color,data){
+function drawTouchesData(color, data){
   if (!data || !data.touches){
     return;
   }

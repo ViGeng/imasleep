@@ -31,6 +31,7 @@ console.log("listening...")
 
 // What to do when there's a new player connection:
 io.sockets.on('connection', newConnection);
+
 function newConnection(socket){
   
   // Note: "socket" now refers to this particular new player's connection

@@ -14,18 +14,18 @@ const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
 // express (https://expressjs.com/) is a simple node.js framework for writing servers
 const express = require("express");
 const app = express();
-var server = app.listen(process.env.PORT || 300);
+let server = app.listen(process.env.PORT || 3000);
 
 // make all the files in 'public' available
 // https://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 
 // socket.io is a simple library for networking
-var io = require('socket.io')(server);
+let io = require('socket.io')(server);
 
-var serverData = {}; // everyone's data
-var numPlayers = 0; // current number of players
-var updateCounter = 0; 
+let serverData = {}; // everyone's data
+let numPlayers = 0; // current number of players
+let updateCounter = 0; 
 
 console.log("listening...")
 
@@ -62,8 +62,8 @@ function newConnection(socket){
   // the data of everybody else's client.
   // Note: setInterval(f,t) = runs function f every t milliseconds
   let timer = setInterval(function(){
-    var others = {};
-    for (var k in serverData){
+    let others = {};
+    for (let k in serverData){
       if (k != socket.id){
         others[k] = serverData[k];
       }
@@ -84,7 +84,7 @@ function newConnection(socket){
   // Time for us to restart by deliberately causing an error.
   socket.on('crash-the-server', function(){
     console.log("crashing...")
-    var notFun = undefined;
+    let notFun = undefined;
     notFun(); // calling the undefined notFun() causes a (desired) crash!
   });
 }

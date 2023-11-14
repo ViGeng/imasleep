@@ -45,8 +45,7 @@ function newConnection(socket){
   numPlayers++;
   
   // OK you're in!
-  socket.emit("connection-approve");
-  
+  socket.emit("connection-approve");  
   
   // What to do when client sends us a message entitled 'client-update'
   socket.on('client-update',function(data){

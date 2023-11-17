@@ -52,6 +52,9 @@ function newConnection(socket){
     // Here the client updates us about itself
     // in this simple example, we just need to dump the client's data
     // into a big table for sending to everyone later!
+    
+    for (let i )
+    
     serverData[socket.id] = data;
     updateCounter++;
   })
@@ -68,8 +71,9 @@ function newConnection(socket){
     //   }
     // }
 		// socket.emit('server-update', others);
+    // console.log(serverData);
     socket.emit('server-update', serverData);
-	}, 2000);
+	}, 1000);
   
   
   // What to do if the client disconnected: let's clean up after them.

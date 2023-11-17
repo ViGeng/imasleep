@@ -74,10 +74,16 @@ function createBtns(number){
 
   for (let i = 0; i < number; i++) {
     console.log("Create Btn: " + i);
-    let btn = creatButton(name);
+    let btn = createButton(name);
+    // Apply CSS styling
+    btn.style('background-color', 'green');
+    btn.style('color', 'white');
+    btn.style('padding', '10px');
+    btn.style('font-size', '16px');
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
     btns.i = btn;
     btn.mousePressed(onBtnPressed);
+    btn.touchStarted(onBtnPressed);
   }
 }
 

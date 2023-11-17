@@ -18,7 +18,7 @@ var colors = [[120,200,255],[255,120,180]]
 // The main p5.js setup
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  createBtns(2);
+  createBtns(4);
 }
 
 //------------------------------------------------
@@ -76,39 +76,31 @@ function createBtns(number){
     console.log("Create Btn: " + i);
     let btn = createButton(name);
     // Apply CSS styling
-    btn.style('background-color', 'green');
-    btn.style('color', 'white');
+    btn.style('background-color', 'Yellow');
+    btn.style('color', 'Blue');
     btn.style('padding', '10px');
     btn.style('font-size', '16px');
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
     btns.push(btn);
-    console.log("create a new button");
     btn.mousePressed(onBtnPressed);
     btn.touchStarted(onBtnPressed);
   }
-  console.log(btns);
 }
 
 function toggleBtn(){
-  
-  console.log(btns.length)
-  
-  console.log(JSON.stringify(serverData));
+
   
   let idx = 0;
   for (let k in serverData){
-    console.log(k);
-    console.log(idx)
     let btn = btns[idx];
     if (serverData[k]) {
       btn.html("asleep");
       console.log("asleep");
-      console.log(btn);
-      btn.style('background-color', 'red');
+      btn.style('background-color', 'Black');
     } else {
       btn.html("awake");
       console.log("awake");
-      btn.style('background-color', 'green');
+      btn.style('background-color', 'Yellow');
     }
     idx++;
   }

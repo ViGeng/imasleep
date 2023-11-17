@@ -7,7 +7,7 @@
 // to deal with a received message: socket.on(title,function(data){ frob(data); })
 
 //========================================================================
-const MAX_PLAYERS = 2; // maximum number of players, which is 2 by default.
+const MAX_PLAYERS = 4; // maximum number of players, which is 2 by default.
                        // you can freely change it to another number here,
                        // but will need to update the drawing code in public/sketch.js accordingly
 
@@ -53,10 +53,6 @@ function newConnection(socket){
     // in this simple example, we just need to dump the client's data
     // into a big table for sending to everyone later!
     
-    for (let i in data){
-      console.log(data.isSlept)
-    }
-    
     serverData[socket.id] = data;
     updateCounter++;
   })
@@ -73,9 +69,8 @@ function newConnection(socket){
     //   }
     // }
 		// socket.emit('server-update', others);
-    console.log(serverData);
     socket.emit('server-update', serverData);
-	}, 1000);
+	}, 300);
   
   
   // What to do if the client disconnected: let's clean up after them.

@@ -64,7 +64,7 @@ function drawTouchesData(color, data){
 function onBtnPressed(){
   isSlept = !isSlept;
   // toggleBtn(isSlept)
-  clientData.isSlept = isSlept;
+  clientData = isSlept;
   socket.emit('client-update', clientData);
 }
 
@@ -93,9 +93,10 @@ function toggleBtn(){
   
   let idx = 0;
   for (let k in serverData){
-    console.log(serverData.k);
+    console.log(k);
+    console.log(idx)
     let btn = btns.idx;
-    if (serverData.k.isSlept) {
+    if (serverData[k]) {
       btn.html("asleep");
     } else {
       btn.html("awake");

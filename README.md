@@ -1,4 +1,23 @@
-# networked-touches
+# Sleep Early Together
+
+This is a course assignment from HKUST(GZ) CMA5001.
+This mini application is to help people know whether their friends have slept or not.
+The motivation of this application is to help people sleep early and have a healthy life.
+
+## Features
+
+🛌 **Show friends sleeping status**
+🔔 You can slightly tap your friend to kindly remind him/her to sleep
+⏳ Show you are going to sleep
+📊 Show your sleeping history which can be seen by your friends
+
+## Road Map
+
+- show sleeping status
+  - [ ] client-server communication
+  - [ ] show sleeping status
+
+## networked-touches
 - Share multitouch data between exactly two players.
 
 ### public/sketch.js

@@ -88,8 +88,12 @@ function createBtns(number){
 }
 
 function toggleBtn(){
+  
+  console.log(JSON.stringify(serverData));
+  
   let idx = 0;
   for (let k in serverData){
+    console.log(serverData.k);
     let btn = btns.idx;
     if (serverData.k.isSlept) {
       btn.html("asleep");

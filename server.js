@@ -53,7 +53,9 @@ function newConnection(socket){
     // in this simple example, we just need to dump the client's data
     // into a big table for sending to everyone later!
     
-    for (let i )
+    for (let i in data){
+      console.log(data.isSlept)
+    }
     
     serverData[socket.id] = data;
     updateCounter++;
@@ -71,7 +73,7 @@ function newConnection(socket){
     //   }
     // }
 		// socket.emit('server-update', others);
-    // console.log(serverData);
+    console.log(serverData);
     socket.emit('server-update', serverData);
 	}, 1000);
   

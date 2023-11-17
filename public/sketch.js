@@ -9,7 +9,7 @@ var clientData = {}; // stores this particular client's data
 var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 var isSlept = false;
-var btns = {}; // id: btn
+var btns = []; // id: btn
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -81,13 +81,17 @@ function createBtns(number){
     btn.style('padding', '10px');
     btn.style('font-size', '16px');
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
-    btns.i = btn;
+    btns.push(btn);
+    console.log("create a new button");
     btn.mousePressed(onBtnPressed);
     btn.touchStarted(onBtnPressed);
   }
+  console.log(btns);
 }
 
 function toggleBtn(){
+  
+  console.log(btns.length)
   
   console.log(JSON.stringify(serverData));
   
@@ -95,11 +99,16 @@ function toggleBtn(){
   for (let k in serverData){
     console.log(k);
     console.log(idx)
-    let btn = btns.idx;
+    let btn = btns[idx];
     if (serverData[k]) {
       btn.html("asleep");
+      console.log("asleep");
+      console.log(btn);
+      btn.style('background-color', 'red');
     } else {
       btn.html("awake");
+      console.log("awake");
+      btn.style('background-color', 'green');
     }
     idx++;
   }

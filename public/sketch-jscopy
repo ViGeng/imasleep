@@ -8,8 +8,6 @@ var socket = io(); // the networking library
 var clientData = {}; // stores this particular client's data
 var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
-var isSlept = false;
-var btns = {}; // id: btn
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -18,7 +16,6 @@ var colors = [[120,200,255],[255,120,180]]
 // The main p5.js setup
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  createBtns(2);
 }
 
 //------------------------------------------------
@@ -37,9 +34,22 @@ function draw() {
     showMyErrorScreen("Waiting for server to usher you...");
     return;
   }
+  
+  // 2. Update touches data: 
+  // Collect all the touches info and update this client's data.
+  // Then send this client's data the server
+  clientData.touches = touches;
+  socket.emit('client-update', clientData);
 
-  toggleBtn();
-
+  // 3. Fetch the other player's data. Since this demo only allows 
+  // two players, we just grab the first item in the table. 
+  // Use a loop to iterate serverData if you want more than
+  // two players (check out sensors-chorus or sensors-rooms)
+  let otherData = serverData[Object.keys(serverData)[0]];
+  
+  // 4. Draw the players' fingertips.
+  drawTouchesData(colors[0],otherData);
+  drawTouchesData(colors[1],clientData);
 }
 
 //------------------------------------------------
@@ -60,41 +70,6 @@ function drawTouchesData(color, data){
     circle(data.touches[i].x,data.touches[i].y,90);
   }
 }
-
-function onBtnPressed(){
-  isSlept = !isSlept;
-  // toggleBtn(isSlept)
-  clientData.isSlept = isSlept;
-  socket.emit('client-update', clientData);
-}
-
-function createBtns(number){
-  // suppose 2 btns in all
-  let name = "awake"
-
-  for (let i = 0; i < number; i++) {
-    console.log("Create Btn: " + i);
-    let btn = creatButton(name);
-    btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
-    btns.i = btn;
-    btn.mousePressed(onBtnPressed);
-  }
-}
-
-function toggleBtn(){
-  let idx = 0;
-  for (let k in serverData){
-    let btn = btns.idx;
-    if (serverData.k.isSlept) {
-      btn.html("asleep");
-    } else {
-      btn.html("awake");
-    }
-    idx++;
-  }
-}
-
-
 
 //------------------------------------------------
 // Show an error screen if there's a network problem.
@@ -140,8 +115,6 @@ document.ontouchmove = function(event) {
 function windowResized() { //this detects when the window is resized, such as entering fullscreen mode, or changing orientation of the device.
   resizeCanvas(windowWidth, windowHeight); //resizes the canvas to the new dimensions 
 }
-
-
 
 //------------------------------------------------
 // Event handlers for the Socket library. 

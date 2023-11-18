@@ -19,10 +19,12 @@ The motivation of this application is to help people sleep early and have a heal
 - show sleeping status
   - [x] client-server communication
   - [x] show sleeping status
-- [ ] distinguish users: icons and users are corresponding
-- [ ] Beautify the user interface
-  - [ ] 🏠 house icon on buttons
-  - [ ] 💡 bulb icon on buttons
+- [x] distinguish users: icons and users are corresponding, show names
+  - [ ] show username under the button
+- [x] Beautify the user interface
+  - [x] 🏠 house icon on buttons
+  - [x] 💡 bulb icon on buttons
+- [ ] disable buttons which not belong to the user
 
 ## networked-touches
 - Share multitouch data between exactly two players.

@@ -79,7 +79,8 @@ function drawTouchesData(color, data){
 function onBtnPressed(){
   isSlept = !isSlept;
   // toggleBtn(isSlept)
-  clientData = isSlept;
+  clientData.isSlept = isSlept;
+  clientData.username = UNSER_NAME;
   socket.emit('client-update', clientData);
 }
 
@@ -113,20 +114,20 @@ function toggleBtn(){
   }
 }
 
-function changeBtnStatus(btn, isSlept, isMe){
-  let ASLEEPTemp = ASLEEP;
-  let AWAKETemp = AWAKE;
+function changeBtnStatus(btn, clientData, isMe){
   if (isMe) {
     btn.style('border', '3px solid black');
-    ASLEEPTemp = UNSER_NAME + ASLEEP;
-    AWAKETemp = UNSER_NAME + AWAKE;
   }
-  if (isSlept) {
+  let ASLEEPTemp = clientData['username'] + ASLEEP;
+  let AWAKETemp = clientData['username'] + AWAKE;
+  if (clientData['isSlept']) {
     btn.html(ASLEEPTemp);
     btn.style('background-color', 'Black');
+    btn.style('color', 'white');
   } else {
     btn.html(AWAKETemp);
     btn.style('background-color', 'Yellow');
+    btn.style('color', 'black');
   }
 }
 

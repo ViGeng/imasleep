@@ -13,6 +13,7 @@ var btns = []; // id: btn
 var ASLEEP = "🏠🛌💤"
 var AWAKE = "🏠💡👩‍💻"
 var MAX_CLIENTS = 6;
+var UNSER_NAME = "👩"
 
 let bg;
 
@@ -24,6 +25,8 @@ var colors = [[120,200,255],[255,120,180]]
 function setup() {
   createCanvas(windowWidth, windowHeight);
   createBtns(MAX_CLIENTS);
+  // ask the user to input their name
+  UNSER_NAME = prompt("What's your name?");
 }
 
 function preload() {
@@ -107,19 +110,24 @@ function toggleBtn(){
   let idx = 0;
   for (let k in serverData){
     let btn = btns[idx];
-    if (socket.id == k) {
-      btn.style('border', '3px solid black');
-    }
-    if (serverData[k]) {
-      btn.html(ASLEEP);
-      console.log("asleep");
-      btn.style('background-color', 'Black');
-    } else {
-      btn.html(AWAKE);
-      console.log("awake");
-      btn.style('background-color', 'Yellow');
-    }
+    changeBtnStatus(btn, serverData[k], k == socket.id);
     idx++;
+  }
+}
+
+function changeBtnStatus(btn, isSlept, isMe){
+  ASLEEPTemp, AWAKETemp = ASLEEP, AWAKE;
+  if (isMe) {
+    btn.style('border', '3px solid black');
+    ASLEEPTemp = UNSER_NAME + ASLEEP;
+    AWAKETemp = UNSER_NAME + AWAKE;
+  }
+  if (isSlept) {
+    btn.html(ASLEEPTemp);
+    btn.style('background-color', 'Black');
+  } else {
+    btn.html(AWAKETemp);
+    btn.style('background-color', 'Yellow');
   }
 }
 

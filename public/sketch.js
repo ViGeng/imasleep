@@ -27,6 +27,7 @@ function setup() {
   createBtns(MAX_CLIENTS);
   // ask the user to input their name
   UNSER_NAME = prompt("What's your name?");
+  console.log("User name: " + UNSER_NAME);
 }
 
 function preload() {
@@ -37,14 +38,11 @@ function preload() {
 // The main p5.js draw loop
 //
 function draw() {
-  // background (60,40,60);
-  // drawBackground();
   image(bg, 0, 0, windowWidth, windowHeight);
 
   // Add title on the background
   fill(0);
   textSize(32);
-  // set the title on the top
   textAlign(CENTER, CENTER);
   text("Who are asleep?", windowWidth/2, windowHeight/10);
 
@@ -116,7 +114,8 @@ function toggleBtn(){
 }
 
 function changeBtnStatus(btn, isSlept, isMe){
-  ASLEEPTemp, AWAKETemp = ASLEEP, AWAKE;
+  let ASLEEPTemp = ASLEEP;
+  let AWAKETemp = AWAKE;
   if (isMe) {
     btn.style('border', '3px solid black');
     ASLEEPTemp = UNSER_NAME + ASLEEP;

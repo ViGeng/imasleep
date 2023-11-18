@@ -10,8 +10,8 @@ var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 var isSlept = false;
 var btns = []; // id: btn
-var ASLEEP = "🏠🛌💤"
-var AWAKE = "🏠💡👩‍💻"
+var ASLEEP = "🛌💤"
+var AWAKE = "💡👩‍💻"
 var MAX_CLIENTS = 6;
 var UNSER_NAME = "👩"
 
@@ -116,19 +116,22 @@ function toggleBtn(){
 
 function changeBtnStatus(btn, clientData, isMe){
   if (isMe) {
-    btn.style('border', '3px solid black');
+    btn.style('border', '3px solid Blue');
   }
-  let ASLEEPTemp = clientData['username'] + ASLEEP;
-  let AWAKETemp = clientData['username'] + AWAKE;
   if (clientData['isSlept']) {
-    btn.html(ASLEEPTemp);
+    btn.html(ASLEEP);
     btn.style('background-color', 'Black');
     btn.style('color', 'white');
+    // Set a text under the button using the username
   } else {
-    btn.html(AWAKETemp);
+    btn.html(AWAKE);
     btn.style('background-color', 'Yellow');
     btn.style('color', 'black');
   }
+  let usernameText = createP(clientData['username']);
+  usernameText.style('color', 'Black');
+  usernameText.style('font-size', '20px');
+  usernameText.position(btn.x, btn.y + btn.height + 8);
 }
 
 //------------------------------------------------

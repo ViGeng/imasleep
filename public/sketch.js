@@ -10,6 +10,7 @@ var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 var isSlept = false;
 var btns = []; // id: btn
+var AS
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]

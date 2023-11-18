@@ -7,15 +7,21 @@ The motivation of this application is to help people sleep early and have a heal
 ## Features
 
 🛌 **Show friends sleeping status**
+
 🔔 You can slightly tap your friend to kindly remind him/her to sleep
+
 ⏳ Show you are going to sleep
+
 📊 Show your sleeping history which can be seen by your friends
 
 ## Road Map
 
 - show sleeping status
-  - [ ] client-server communication
-  - [ ] show sleeping status
+  - [x] client-server communication
+  - [x] show sleeping status
+- [ ] distinguish users
+- [x] Beautify the user interface
+  - [ ] 
 
 ## networked-touches
 - Share multitouch data between exactly two players.

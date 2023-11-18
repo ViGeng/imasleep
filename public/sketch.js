@@ -37,7 +37,14 @@ function draw() {
   // background (60,40,60);
   // drawBackground();
   image(bg, 0, 0, windowWidth, windowHeight);
-  
+
+  // Add title on the background
+  fill(0);
+  textSize(32);
+  // set the title on the top
+  textAlign(CENTER, CENTER);
+  text("Who are asleep?", windowWidth/2, windowHeight/10);
+
   // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){
     showMyErrorScreen("Sorry, room is full!\nPlease come back later...");
@@ -101,9 +108,8 @@ function toggleBtn(){
   for (let k in serverData){
     let btn = btns[idx];
     if (socket.id == k) {
-      btn.style('border', '2px solid black');
+      btn.style('border', '3px solid black');
     }
-    
     if (serverData[k]) {
       btn.html(ASLEEP);
       console.log("asleep");

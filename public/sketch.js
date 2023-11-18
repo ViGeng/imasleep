@@ -10,7 +10,8 @@ var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 var isSlept = false;
 var btns = []; // id: btn
-var AS
+var ASLEEP = "🏠🛌💤"
+var AWAKE = "🏠💡👩‍💻"
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -22,13 +23,49 @@ function setup() {
   createBtns(4);
 }
 
+
+function drawBackground() {
+  // Draw trees
+  fill('🌳');
+  rect(100, 300, 50, 200);
+  rect(200, 300, 50, 200);
+  
+  // Draw grass
+  fill('🌱');
+  rect(0, height - 50, width, 50);
+  
+  // Draw animals
+  fill('🐶');
+  circle(100, 200, 50);
+  
+  fill('🐱');
+  circle(200, 200, 50);
+  
+  // Draw moon
+  fill('🌙');
+  circle(width - 100, 100, 100);
+  
+  // Draw stars
+  fill('⭐');
+  circle(50, 50, 20);
+  
+  fill('⭐');
+  circle(150, 100, 20);
+  
+  fill('⭐');
+  circle(250, 150, 20);
+}
+
 //------------------------------------------------
 // The main p5.js draw loop
 //
 function draw() {
-  background (60,40,60);
-  stroke(255);
-  line(mouseX, mouseY, 0,0); 
+  // background (60,40,60);
+  
+  drawBackground();
+  
+  // stroke(255);
+  // line(mouseX, mouseY, 0,0); 
   
   // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){
@@ -70,17 +107,27 @@ function onBtnPressed(){
 }
 
 function createBtns(number){
-  // suppose 2 btns in all
-  let name = "awake"
-
   for (let i = 0; i < number; i++) {
     console.log("Create Btn: " + i);
-    let btn = createButton(name);
+    let btn = createButton(AWAKE);
+    
+    
     // Apply CSS styling
-    btn.style('background-color', 'Yellow');
-    btn.style('color', 'Blue');
+    btn.style('background-color', '#0078D7');
+    btn.style('color', 'white');
     btn.style('padding', '10px');
     btn.style('font-size', '16px');
+    btn.style('border', 'none');
+    btn.style('border-radius', '4px');
+    btn.style('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.25)');
+    btn.style('cursor', 'pointer');
+    
+    
+    // // Apply CSS styling
+    // btn.style('background-color', 'Yellow');
+    // btn.style('color', 'Blue');
+    // btn.style('padding', '10px');
+    // btn.style('font-size', '16px');
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
     btns.push(btn);
     btn.mousePressed(onBtnPressed);
@@ -95,11 +142,11 @@ function toggleBtn(){
   for (let k in serverData){
     let btn = btns[idx];
     if (serverData[k]) {
-      btn.html("asleep");
+      btn.html(ASLEEP);
       console.log("asleep");
       btn.style('background-color', 'Black');
     } else {
-      btn.html("awake");
+      btn.html(AWAKE);
       console.log("awake");
       btn.style('background-color', 'Yellow');
     }

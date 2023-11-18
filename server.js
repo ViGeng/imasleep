@@ -70,7 +70,7 @@ function newConnection(socket){
     // }
 		// socket.emit('server-update', others);
     socket.emit('server-update', serverData);
-	}, 300);
+	}, 100);
   
   
   // What to do if the client disconnected: let's clean up after them.

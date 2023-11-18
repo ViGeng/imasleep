@@ -12,7 +12,9 @@ var isSlept = false;
 var btns = []; // id: btn
 var ASLEEP = "🏠🛌💤"
 var AWAKE = "🏠💡👩‍💻"
-var MAX_CLIENTS = 4;
+var MAX_CLIENTS = 10;
+
+let bg;
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -24,37 +26,8 @@ function setup() {
   createBtns(MAX_CLIENTS);
 }
 
-
-function drawBackground() {
-  // Draw trees
-  fill('🌳');
-  rect(100, 300, 50, 200);
-  rect(200, 300, 50, 200);
-  
-  // Draw grass
-  fill('🌱');
-  rect(0, height - 50, width, 50);
-  
-  // Draw animals
-  fill('🐶');
-  circle(100, 200, 50);
-  
-  fill('🐱');
-  circle(200, 200, 50);
-  
-  // Draw moon
-  fill('🌙');
-  circle(width - 100, 100, 100);
-  
-  // Draw stars
-  fill('⭐');
-  circle(50, 50, 20);
-  
-  fill('⭐');
-  circle(150, 100, 20);
-  
-  fill('⭐');
-  circle(250, 150, 20);
+function preload() {
+  bg = loadImage('https://cdn.glitch.global/70a7d352-0fd9-4805-9455-ee7e480ef561/bg.jpg?v=1700297506960');
 }
 
 //------------------------------------------------
@@ -63,8 +36,7 @@ function drawBackground() {
 function draw() {
   // background (60,40,60);
   // drawBackground();
-  circle(100, 200, 50);
-  fill('🐶');
+  image(bg, 0, 0, windowWidth, windowHeight);
   
   // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){
@@ -111,9 +83,9 @@ function createBtns(number){
     btn.style('background-color', '#0078D7');
     btn.style('color', 'white');
     btn.style('padding', '10px');
-    btn.style('font-size', '16px');
+    btn.style('font-size', '20px');
     btn.style('border', 'none');
-    btn.style('border-radius', '4px');
+    btn.style('border-radius', '5px');
     btn.style('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.25)');
     btn.style('cursor', 'pointer');
 

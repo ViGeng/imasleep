@@ -95,13 +95,13 @@ function createBtns(number){
     btn.style('padding', '10px');
     btn.style('font-size', '20px');
     btn.style('border', 'none');
-    btn.style('border-radius', '5px');
-    btn.style('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.25)');
+    btn.style('border-radius', '6px');
+    btn.style('box-shadow', '0px 4px 8px rgba(0, 0, 0, 0.25)');
     btn.style('cursor', 'pointer');
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
 
     // add title for this button
-    let usernameText = createP("User " + i);
+    let usernameText = createP("烂尾楼" + i);
     usernameText.style('color', 'Black');
     usernameText.style('font-size', '20px');
     usernameText.position(btn.x, btn.y + btn.height + 8);
@@ -126,6 +126,9 @@ function changeBtnStatus(idx, clientData, isMe){
   let usernameText = usernameTexts[idx];
   if (isMe) {
     btn.style('border', '3px solid Blue');
+  } else {
+    // disable the button, the user can not click
+    btn.attribute('disabled', true);
   }
   if (clientData['isSlept']) {
     btn.html(ASLEEP);

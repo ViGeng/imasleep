@@ -12,6 +12,7 @@ var isSlept = false;
 var btns = []; // id: btn
 var ASLEEP = "🏠🛌💤"
 var AWAKE = "🏠💡👩‍💻"
+var MAX_CLIENTS = 4;
 
 // RGB color backgrounds for the two players
 var colors = [[120,200,255],[255,120,180]]
@@ -20,7 +21,7 @@ var colors = [[120,200,255],[255,120,180]]
 // The main p5.js setup
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  createBtns(4);
+  createBtns(MAX_CLIENTS);
 }
 
 
@@ -61,11 +62,9 @@ function drawBackground() {
 //
 function draw() {
   // background (60,40,60);
-  
-  drawBackground();
-  
-  // stroke(255);
-  // line(mouseX, mouseY, 0,0); 
+  // drawBackground();
+  circle(100, 200, 50);
+  fill('🐶');
   
   // 1. Handle problematic network statuses. Shouldn't happen often.
   if (status == "reject"){
@@ -75,9 +74,7 @@ function draw() {
     showMyErrorScreen("Waiting for server to usher you...");
     return;
   }
-
   toggleBtn();
-
 }
 
 //------------------------------------------------
@@ -110,8 +107,6 @@ function createBtns(number){
   for (let i = 0; i < number; i++) {
     console.log("Create Btn: " + i);
     let btn = createButton(AWAKE);
-    
-    
     // Apply CSS styling
     btn.style('background-color', '#0078D7');
     btn.style('color', 'white');
@@ -121,13 +116,7 @@ function createBtns(number){
     btn.style('border-radius', '4px');
     btn.style('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.25)');
     btn.style('cursor', 'pointer');
-    
-    
-    // // Apply CSS styling
-    // btn.style('background-color', 'Yellow');
-    // btn.style('color', 'Blue');
-    // btn.style('padding', '10px');
-    // btn.style('font-size', '16px');
+
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
     btns.push(btn);
     btn.mousePressed(onBtnPressed);
@@ -136,8 +125,6 @@ function createBtns(number){
 }
 
 function toggleBtn(){
-
-  
   let idx = 0;
   for (let k in serverData){
     let btn = btns[idx];
@@ -153,8 +140,6 @@ function toggleBtn(){
     idx++;
   }
 }
-
-
 
 //------------------------------------------------
 // Show an error screen if there's a network problem.

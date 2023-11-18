@@ -12,7 +12,7 @@ var isSlept = false;
 var btns = []; // id: btn
 var ASLEEP = "🏠🛌💤"
 var AWAKE = "🏠💡👩‍💻"
-var MAX_CLIENTS = 10;
+var MAX_CLIENTS = 6;
 
 let bg;
 
@@ -100,6 +100,10 @@ function toggleBtn(){
   let idx = 0;
   for (let k in serverData){
     let btn = btns[idx];
+    if (socket.id == k) {
+      btn.style('border', '2px solid black');
+    }
+    
     if (serverData[k]) {
       btn.html(ASLEEP);
       console.log("asleep");

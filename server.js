@@ -7,7 +7,7 @@
 // to deal with a received message: socket.on(title,function(data){ frob(data); })
 
 //========================================================================
-const MAX_PLAYERS = 4; // maximum number of players, which is 2 by default.
+const MAX_PLAYERS = 6; // maximum number of players, which is 2 by default.
                        // you can freely change it to another number here,
                        // but will need to update the drawing code in public/sketch.js accordingly
 

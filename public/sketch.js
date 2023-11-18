@@ -10,6 +10,7 @@ var serverData = {}; // stores other users' data from the server
 var status = "unknown"; // or 'approve' or 'reject', depending on whether the server lets you in
 var isSlept = false;
 var btns = []; // id: btn
+var usernameTexts = []; // id: usernameText
 var ASLEEP = "🛌💤"
 var AWAKE = "💡👩‍💻"
 var MAX_CLIENTS = 6;
@@ -97,9 +98,16 @@ function createBtns(number){
     btn.style('border-radius', '5px');
     btn.style('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.25)');
     btn.style('cursor', 'pointer');
-
     btn.position(windowWidth/2, windowHeight/(number+1) * (i + 1));
+
+    // add title for this button
+    let usernameText = createP("User " + i);
+    usernameText.style('color', 'Black');
+    usernameText.style('font-size', '20px');
+    usernameText.position(btn.x, btn.y + btn.height + 8);
+
     btns.push(btn);
+    usernameTexts.push(usernameText);
     btn.mousePressed(onBtnPressed);
     btn.touchStarted(onBtnPressed);
   }
@@ -108,13 +116,14 @@ function createBtns(number){
 function toggleBtn(){
   let idx = 0;
   for (let k in serverData){
-    let btn = btns[idx];
-    changeBtnStatus(btn, serverData[k], k == socket.id);
+    changeBtnStatus(idx, serverData[k], k == socket.id);
     idx++;
   }
 }
 
-function changeBtnStatus(btn, clientData, isMe){
+function changeBtnStatus(idx, clientData, isMe){
+  let btn = btns[idx];
+  let usernameText = usernameTexts[idx];
   if (isMe) {
     btn.style('border', '3px solid Blue');
   }
@@ -128,10 +137,8 @@ function changeBtnStatus(btn, clientData, isMe){
     btn.style('background-color', 'Yellow');
     btn.style('color', 'black');
   }
-  let usernameText = createP(clientData['username']);
-  usernameText.style('color', 'Black');
-  usernameText.style('font-size', '20px');
-  usernameText.position(btn.x, btn.y + btn.height + 8);
+  // get the username text
+  usernameText.html(clientData['username']);
 }
 
 //------------------------------------------------

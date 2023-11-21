@@ -32,7 +32,9 @@ function setup() {
 }
 
 function preload() {
-  bg = loadImage('https://cdn.glitch.global/70a7d352-0fd9-4805-9455-ee7e480ef561/bg.jpg?v=1700297506960');
+  // bg = loadImage('https://cdn.glitch.global/70a7d352-0fd9-4805-9455-ee7e480ef561/bg.jpg?v=1700297506960');
+  // bg = loadImage('https://cdn.glitch.global/70a7d352-0fd9-4805-9455-ee7e480ef561/bg1.jpg?v=1700548696377');
+  bg = loadImage('https://cdn.glitch.global/70a7d352-0fd9-4805-9455-ee7e480ef561/bg2.jpg?v=1700548984082');
 }
 
 //------------------------------------------------
@@ -102,7 +104,7 @@ function createBtns(number){
 
     // add title for this button
     let usernameText = createP("烂尾楼" + i);
-    usernameText.style('color', 'Black');
+    usernameText.style('color', 'blue');
     usernameText.style('font-size', '20px');
     usernameText.position(btn.x, btn.y + btn.height + 8);
 
